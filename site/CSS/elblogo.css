@@ -1,0 +1,109 @@
+@import url(bootstrap.css);
+
+html {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    background: #2C4762 url('/assets/background.png') top repeat-x;
+    padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+}
+.hero-unit {
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+}
+.container {
+    width: 820px;
+}
+
+/* no hover color change for the user name header*/
+a#userNameHeader:hover {
+    color: #999;
+}
+
+.centerContainer {
+    position:relative; background-color: #2C4762; padding: 35px 50px 10px 50px; left: -45px;
+    margin-top: 20px;
+}
+
+/* blog container style */
+.blogContainerHeader {
+    margin-top: 0px; padding-bottom: 0px
+}
+
+/* blog post style*/
+div[class~="blogPost"][class~="hero-unit"] {
+    background-color:  #BBC7D8; padding: 10px 10px 30px 30px;
+}
+
+div[class~="blogPost"][class~="hero-unit"] p {
+    margin-top:15px;
+    font-size: 16px;
+    font-weight: 200;
+    line-height: 25px;
+}
+
+.postUserName {
+    display:block; margin-left: -25px; margin-top:5px; font-size: 1.3em; font-family: "COMIC SANS MS"; margin-buttom:30px;
+}
+
+#blogPostTags {
+    position: relative; margin-bottom: -15px;
+}
+.blogPostTag {
+    cursor: pointer; margin-right: 7px; font: 11px 'Lucida Grande',Verdana,sans-; color: #444
+}
+
+.blogPostTag:hover {
+    color: #A8B1BA;
+    text-decoration: underline;
+}
+
+/* side options */
+.sideOptions {
+   float:right;
+}
+.sideOptions:after{
+    clear:both;
+}
+
+.sideOptionsButton {
+    position: relative ;font-size: 1.2em; font-family: "COMIC SANS MS"; width: 100%; margin-buttom: 20px;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+.sideOptionsButton:after {
+    display: table;
+    content: "";
+}
+
+.searchOptions {
+    position: relative; margin-top:30px; padding-left:5px; padding-right:5px;
+}
+
+.searchOptionsSearchLine {
+    position:relative; display:block; margin-top: 5px; width:200px; height:30px;
+}
+
+.searchOptionsLabel {
+    position: absolute; width: 90px;
+    font-size: 10px; font-family: 'bookman old style'; line-height: 25px; text-align: center;
+}
+
+.searchOptionsInput {
+      position: absolute; right: 0%;
+}
+
+.searchOptionsSearchButton {
+    font-size: 10px; line-height: 19px; font-weight: bold; text-transform: uppercase;
+    font-family: 'bookman old style';
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    margin-top: 5px;
+}
+
