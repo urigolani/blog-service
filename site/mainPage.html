@@ -21,7 +21,24 @@
     <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
     <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
   </head>
-
+  
+  <script id="blogPostTmpl" type='text/plain'>
+      <div id="{{id}}" class="blogPost hero-unit" > <!-- blog post-->
+          <span class="postUserName">{{author}}</span >
+          {{#title}}
+          <h4>{{title}}</h4>
+          {{/title}}
+          {{#body}}
+          <p>{{body}}</p>
+          {{/body}}
+          <div class="blogPostTags">
+              {{#tags}}
+              <span class="blogPostTag">#{{name}}</span>
+              {{/tags}}
+          </div>
+      </div>
+  </script>
+  
   <body>
 
     <div class="navbar navbar-fixed-top" style="background-color: #2C4762;">
@@ -32,42 +49,28 @@
             <span class="i-bar"></span>
             <span class="i-bar"></span>
           </a>
-          <a class="brand" href="#">El Blogo</a>
+          <a class="brand initSite pointer">El Blogo</a>
           <div class="nav-collapse  pull-right">
             <ul class="nav">
               <li><a id="userNameHeader" target="_blank">user name</a></li>
-              <li><a class="signOutLink" href="#">sign out</a></li>
+              <li><a class="signOutLink pointer" target="_blank">sign out</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
       </div>
     </div>
 
-    <div class="blogContainerHeader container">
-        <img src="assets/ElBlogoHeader2.png">
+    <div class="blogHeader container initSite">
+        <img class="initSite pointer" src="assets/ElBlogoHeader2.png">
     <div class="hero-unit container centerContainer">
-        <div class="blogContainer row">
-            <div class="span7"> <!--blog posts-->
-                <div class="blogPost hero-unit" > <!-- blog post-->
-                    <span class="postUserName">username:</span >
-                    <p> Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
-
-                        Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
-                        Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
-                        Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
-
-                    </p>
-                    <div id="blogPostTags">
-                        <a class="blogPostTag">#tag</a>
-                        <a class="blogPostTag">#tag2</a>
-                    </div>
-                </div>
+        <div class="row">
+            <div id="blogContainer" class="span7"> <!--blog posts-->
             </div>
 
-            <div class="sideOptions span3 "> <!                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    gh-- options-->
-                <button class="btn-success btn-large sideOptionsButton">Add post</button>
-                <button class="btn-success btn-large sideOptionsButton">My area</button>
-                <button class="btn-success btn-large sideOptionsButton">Search options</button>
+            <div class="sideOptions span3 "> <!-- options-->
+                <button id="btnAddPost" class="btn-success btn-large sideOptionsButton">Add post</button>
+                <button id="btnMyArea" class="btn-success btn-large sideOptionsButton">My area</button>
+                <button id="btnSearchOptions" class="btn-success btn-large sideOptionsButton">Search options</button>
                 <form class="searchOptions form-search well">
                     <div class="searchOptionsSearchLine">
                         <span class="label searchOptionsLabel">dating from:</span>
@@ -78,12 +81,12 @@
                         <input class="form-search input-small searchOptionsInput " placeholder="01/01/1970">
                     </div>
                     <div class="searchOptionsSearchLine">
-                        <span class="label searchOptionsLabel">tags:</span>
-                        <input class="form-search input-small searchOptionsInput" placeholder="sport, music">
+                        <span class="label searchOptionsLabel">author:</span>
+                        <input class="form-search input-small searchOptionsInput " placeholder="Yair Lapid">
                     </div>
                     <div class="searchOptionsSearchLine">
-                        <span class="label searchOptionsLabel">By user:</span>
-                        <input class="form-search input-small searchOptionsInput " placeholder="Yair Lapid">
+                        <span class="label searchOptionsLabel">tags:</span>
+                        <input class="form-search input-small searchOptionsInput" placeholder="sport, music">
                     </div>
                     <div class="searchOptionsSearchLine">
                         <button class="btn-primary btn-small  pull-right searchOptionsSearchButton ">Search!</button>
@@ -98,20 +101,26 @@
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+    <script src="Scripts/jQuery.js" ></script>
+    <script src="Scripts/hogan.js"></script>
+    <script src="Scripts/ServiceUtil.js"></script>
+    <script src="Scripts/ServiceRequestManager.js"></script>
+    <script src="Scripts/mainPageViewModel.js"></script>
+    <script src="Scripts/HttpRequestBase.js"></script>
+
     <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
-    <script src="../assets/js/tests/vendor/jquery.js"></script>
-    <script src="../assets/js/bootstrap-transition.js"></script>
-    <script src="../assets/js/bootstrap-alert.js"></script>
-    <script src="../assets/js/bootstrap-modal.js"></script>
-    <script src="../assets/js/bootstrap-dropdown.js"></script>
-    <script src="../assets/js/bootstrap-scrollspy.js"></script>
-    <script src="../assets/js/bootstrap-tab.js"></script>
-    <script src="../assets/js/bootstrap-tooltip.js"></script>
-    <script src="../assets/js/bootstrap-popover.js"></script>
-    <script src="../assets/js/bootstrap-button.js"></script>
+    <script src="Scripts/bootstrap/bootstrap-transition.js"></script>
+    <script src="Scripts/bootstrap/bootstrap-alert.js"></script>
+    <script src="Scripts/bootstrap/bootstrap-modal.js"></script>
+    <script src="Scripts/bootstrap/bootstrap-dropdown.js"></script>
+    <script src="Scripts/bootstrap/bootstrap-scrollspy.js"></script>
+    <script src="Scripts/bootstrap/bootstrap-tab.js"></script>
+    <script src="Scripts/bootstrap/bootstrap-tooltip.js"></script>
+    <script src="Scripts/bootstrap/bootstrap-popover.js"></script>
+    <script src="Scripts/bootstrap/bootstrap-button.js"></script>
     <script src="../assets/js/bootstrap-collapse.js"></script>
-    <script src="../assets/js/bootstrap-carousel.js"></script>
-    <script src="../assets/js/bootstrap-typeahead.js"></script>
+    <script src="Scripts/bootstrap/bootstrap-carousel.js"></script>
+    <script src="Scripts/bootstrap/bootstrap-typeahead.js"></script>
 
   </body>
 </html>

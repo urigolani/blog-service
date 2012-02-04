@@ -12,7 +12,7 @@ express.get('/CSS/:fileName',function (req, res){
     res.sendfile(filePath);
 });
 
-express.get('/Scripts/:fileName',function (req, res){
+express.get('/Scripts/:fileName/filename2',function (req, res){
     var filePath = path.join(__dirname, '../site/Scripts', req.params.fileName);
     res.header('Content-Type', 'text/javascript');
     res.sendfile(filePath);

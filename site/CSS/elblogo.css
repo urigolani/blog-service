@@ -23,13 +23,17 @@ a#userNameHeader:hover {
     color: #999;
 }
 
+.pointer {
+    cursor: pointer;
+}
+
 .centerContainer {
     position:relative; background-color: #2C4762; padding: 35px 50px 10px 50px; left: -45px;
     margin-top: 20px;
 }
 
 /* blog container style */
-.blogContainerHeader {
+.blogHeader {
     margin-top: 0px; padding-bottom: 0px
 }
 
@@ -49,7 +53,7 @@ div[class~="blogPost"][class~="hero-unit"] p {
     display:block; margin-left: -25px; margin-top:5px; font-size: 1.3em; font-family: "COMIC SANS MS"; margin-buttom:30px;
 }
 
-#blogPostTags {
+.blogPostTags {
     position: relative; margin-bottom: -15px;
 }
 .blogPostTag {
@@ -82,7 +86,7 @@ div[class~="blogPost"][class~="hero-unit"] p {
 }
 
 .searchOptions {
-    position: relative; margin-top:30px; padding-left:5px; padding-right:5px;
+    position: relative; margin-top:30px; padding-left:5px; padding-right:5px; display:none;
 }
 
 .searchOptionsSearchLine {
