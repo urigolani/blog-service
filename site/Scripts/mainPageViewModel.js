@@ -32,6 +32,11 @@
         totalSearchPosts: 0,
 
         ///<summary>
+        /// The partition key for the last search.
+        ///</summary>
+        lastPartitionKey: 0,
+
+        ///<summary>
         /// The service request manager
         ///</summary>
         serviceRequestManager: null,
@@ -59,14 +64,16 @@
 
             this.serviceRequestManager = new ElBlogo.ServiceRequestManager();
             this.postTemplate = Hogan.compile($('#blogPostTmpl').html());
-            this.serviceRequestManager.getPosts({}, this.getPostsSuccess.bind(self), this.getPostsError.bind(self));
+            this.serviceRequestManager.getPosts({}).then(this.getPostsInitSuccess.bind(self), this.getPostsError.bind(self));
         },
-        getPostsSuccess: function(posts){
+        getPostsInitSuccess: function(getResp){
             ///<summary>
             /// success callback to be called on the posts retrieved via a successful getPosts
             ///</summary>
             this.clearPosts();
-            this.postsList = posts;
+            this.postsList = getResp.posts;
+            this.lastPartitionKey = getResp.pKey;
+            this.totalSearchPosts = getResp.totalSearchPosts;
             this.traversePostsList('init');
         },
         getPostsError: function(err){
@@ -113,7 +120,7 @@
             this.postsIndex = nextIndex;
             $('#blogContainer').children().remove();
 
-            for(i = 0, l = Math.min(nextIndex + 10, this.postsList.length); i < l; i++){
+            for(i = nextIndex, l = Math.min(nextIndex + this.postChunk, this.postsList.length); i < l; i++){
                 post = this.postsList[i];
 
                 // modify tags for the blog post template
@@ -126,6 +133,8 @@
                 childPosts += this.postTemplate.render(post);
             }
 
+            this.checkToggleNext();
+            this.checkTogglePrev();
             $('#blogContainer').append(childPosts);
         },
         clearPosts: function(){
@@ -155,7 +164,7 @@
             /// current post index.
             ///</summary>
 
-            if (this.postsIndex > this.postChunk) {
+            if (this.postsIndex >= this.postChunk) {
                $('#btnPrev').show();
             } else {
                 $('#btnPrev').hide();
@@ -175,23 +184,48 @@
             // init site handler
             jqDoc.on('click', '.initSite', function (event) {
                 self.setView('mainView');
-                self.serviceRequestManager.getPosts({}, self.getPostsSuccess, self.getPostsError);
+                self.serviceRequestManager.getPosts({})
+                    .then(self.getPostsInitSuccess, self.getPostsError);
+            });
+
+            // blog posts - next and prev buttons handlers
+            jqDoc.on('click', '#btnNext', function (event) {
+                var opts = {
+                    pKey: self.lastPartitionKey
+                    },
+                    getPostsPromise;
+
+                // check if we need to get more posts from the service
+                if(self.postsList.length < this.totalSearchPosts && self.postsIndex + self.postChunk > self.postsList.length) {
+                    getPostsPromise = self.serviceRequestManager.getPosts(opts);
+                    getPostsPromise.done(function(postsResponse) {
+                        self.totalSearchPosts = postsResponse.totalSearchPosts;
+                        self.lastPartitionKey = postsResponse.pKey;
+                        self.postsList = self.postsList.concat(postsResponse.posts);
+                        self.traversePostsList('next');
+                    });
+                } else {
+                    // we have enough posts locally, or there is no more posts to milk from the service for
+                    // the current search
+                    self.traversePostsList('next');
+                }
+            });
+
+            jqDoc.on('click', '#btnPrev', function (event) {
+                self.traversePostsList('prev');
             });
 
             // side options event handlers
             jqDoc.on('click', '#btnMyArea', function (event) {
                 var opts = {
-                    author: self.userName
+                    author: self.userName,
+                    pKey: self.lastPartitionKey
                 };
-                self.serviceRequestManager.getPosts(opts, self.getPostsSuccess.bind(self), self.getPostsError.bind(self));
+                self.serviceRequestManager.getPosts(opts).then(self.getPostsInitSuccess.bind(self), self.getPostsError.bind(self));
             });
 
             jqDoc.on('click', '#btnAddPost', function (event) {
                 self.setView('addPostView');
-            });
-
-            jqDoc.on('click', '#btnCreatePost', function (event) {
-
             });
 
             jqDoc.on('click', '#btnSearchOptions', function (event) {
@@ -202,18 +236,19 @@
             // create post event handlers
             jqDoc.on('click', '#btnCreatePost', function (event) {
                 var opts = {
-                    author: self.userName
+                    author: self.userName,
+                    pKey: self.lastPartitionKey
                 };
 
-                self.serviceRequestManager.getPosts(opts, self.getPostsSuccess.bind(self), self.getPostsError.bind(self));
+                self.serviceRequestManager.getPosts(opts).then(self.getPostsInitSuccess.bind(self), self.getPostsError.bind(self));
                 self.setView('mainView');
                 // TODO - code to add post
                 var postTimestamp = 0, post = {}  // TODO - remove this after adding the above code
-                self.serviceRequestManager.getPosts(opts, function(posts){
+                self.serviceRequestManager.getPosts(opts).then( function(posts){
                     if(posts.length > 0 && posts[0].timestamp != postTimestamp){
                         posts.unshift(post);
                     }
-                    self.getPostsSuccess(posts);
+                    self.getPostsInitSuccess(posts);
                 }, self.getPostsError);
             });
 

@@ -8,14 +8,16 @@
     }
 
     ElBlogo.ServiceRequestManager.prototype = {
-        getPosts: function (opts, onSuccess, onFailure) {
+        getPosts1: function (opts) {
             /// <summary>
             /// requests the current directory list from the service.
             /// </summary>
             /// <param name="opts" type="String">path to the feed/dir to fetch from</param>
-            /// <param name="onSuccess" type="Function">method to be applied on the directory list when available</param>
-            var posts = [];
-            var post1,post2;
+            var posts = [],
+                post1,post2,
+                differ = $.Deferred(),
+                resp = {};
+
             post1 = {
                 id: 'post1',
                 timestamp: (new Date()).getTime(),
@@ -39,7 +41,41 @@
 
             posts.push(post1);
             posts.push(post2);
-            onSuccess(posts)
+            resp.totalSearchPosts = 2;
+            resp.lastPartitionKey = 50;
+            resp.posts = posts;
+            differ.resolve(resp);
+            return differ.promise();
+        },
+        getPosts: function (opts) {
+            /// <summary>
+            /// requests the current directory list from the service.
+            /// </summary>
+            /// <param name="opts" type="String">path to the feed/dir to fetch from</param>
+            var posts = [],
+                post1,
+                differ = $.Deferred(),
+                resp = {};
+            for(var i = 0; i < 25; i++){
+                post1 = {
+                    id: 'post1',
+                    timestamp: (new Date()).getTime(),
+                    author: 'uri golani',
+                    title: 'the book of eli',
+                    body: 'some chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few times' +
+                        'some chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few times ' +
+                        'some chunk of words copied a few times',
+                    tags: ['mechanics', 'sports']
+                }
+                posts.push(post1);
+            }
+
+
+            resp.totalSearchPosts = 25;
+            resp.lastPartitionKey = 50;
+            resp.posts = posts;
+            differ.resolve(resp);
+            return differ.promise();
         },
 
 
