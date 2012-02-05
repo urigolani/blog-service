@@ -47,6 +47,7 @@
             differ.resolve(resp);
             return differ.promise();
         },
+        k: 0,
         getPosts: function (opts) {
             /// <summary>
             /// requests the current directory list from the service.
@@ -55,12 +56,13 @@
             var posts = [],
                 post1,
                 differ = $.Deferred(),
-                resp = {};
-            for(var i = 0; i < 25; i++){
+                resp = {},
+                i = this.k + 10;
+            for(; this.k < i; this.k++){
                 post1 = {
                     id: 'post1',
                     timestamp: (new Date()).getTime(),
-                    author: 'uri golani',
+                    author: 'uri golani' + this.k,
                     title: 'the book of eli',
                     body: 'some chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few times' +
                         'some chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few times ' +
@@ -70,8 +72,7 @@
                 posts.push(post1);
             }
 
-
-            resp.totalSearchPosts = 25;
+            resp.totalSearchPosts = 40;
             resp.lastPartitionKey = 50;
             resp.posts = posts;
             differ.resolve(resp);

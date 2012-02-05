@@ -39,7 +39,7 @@ a#userNameHeader:hover {
 
 /* blog post style*/
 div[class~="blogPost"][class~="hero-unit"] {
-    background-color:  #BBC7D8; padding: 10px 10px 30px 30px;
+    background-color:  #E0E0E0; padding: 10px 10px 30px 30px;
 }
 
 div[class~="blogPost"][class~="hero-unit"] p {
@@ -50,7 +50,12 @@ div[class~="blogPost"][class~="hero-unit"] p {
 }
 
 .postUserName {
-    display:block; margin-left: -25px; margin-top:5px; font-size: 1.3em; font-family: "COMIC SANS MS"; margin-buttom:30px;
+    display:block; margin-left: -20px; margin-top:5px; font-size: 1.1em; font-family: "COMIC SANS MS"; color: #444;
+    margin-buttom:30px;
+}
+
+.postTitle{
+    position:relative; top: 10px; font-size: 1.3em;
 }
 
 .blogPostTags {

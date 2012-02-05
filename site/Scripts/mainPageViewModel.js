@@ -64,6 +64,7 @@
 
             this.serviceRequestManager = new ElBlogo.ServiceRequestManager();
             this.postTemplate = Hogan.compile($('#blogPostTmpl').html());
+            this.setView('mainView');
             this.serviceRequestManager.getPosts({}).then(this.getPostsInitSuccess.bind(self), this.getPostsError.bind(self));
         },
         getPostsInitSuccess: function(getResp){
@@ -132,10 +133,10 @@
                 post.tagsReplaced = true;
                 childPosts += this.postTemplate.render(post);
             }
-
+            $('#blogContainer').append(childPosts);
+            $('html, body').animate({ scrollTop: 0 }, 'slow');
             this.checkToggleNext();
             this.checkTogglePrev();
-            $('#blogContainer').append(childPosts);
         },
         clearPosts: function(){
             var i, l;
@@ -176,6 +177,13 @@
             /// displays and hide elements relevant for each screen and shows relevant animations.
             ///</summary>
 
+            switch (view) {
+                case 'mainView':
+                    $('.searchOptions').hide();
+                    $('.traversePostButton').hide();
+                    // TODO - add show props to what ever will be removed for the create post page
+                    break;
+            }
         },
         bind: function(){
             var jqDoc = $(document),
@@ -185,7 +193,7 @@
             jqDoc.on('click', '.initSite', function (event) {
                 self.setView('mainView');
                 self.serviceRequestManager.getPosts({})
-                    .then(self.getPostsInitSuccess, self.getPostsError);
+                    .then(self.getPostsInitSuccess.bind(self), self.getPostsError);
             });
 
             // blog posts - next and prev buttons handlers
@@ -195,8 +203,9 @@
                     },
                     getPostsPromise;
 
+                event.stopPropagation();
                 // check if we need to get more posts from the service
-                if(self.postsList.length < this.totalSearchPosts && self.postsIndex + self.postChunk > self.postsList.length) {
+                if(self.postsList.length < self.totalSearchPosts && self.postsIndex + self.postChunk >= self.postsList.length) {
                     getPostsPromise = self.serviceRequestManager.getPosts(opts);
                     getPostsPromise.done(function(postsResponse) {
                         self.totalSearchPosts = postsResponse.totalSearchPosts;
@@ -252,7 +261,15 @@
                 }, self.getPostsError);
             });
 
-
+            jqDoc.on('click', '.blogPostTag', function (event) {
+                var opts,
+                    jqText = $(this).text(),
+                    tag = jqText.substring(1, jqText.length);
+                opts = {
+                    tags: [tag]
+                };
+                self.serviceRequestManager.getPosts(opts).then(self.getPostsInitSuccess.bind(self), self.getPostsError.bind(self));
+            });
         }
     }
 

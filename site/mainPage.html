@@ -24,9 +24,9 @@
   
   <script id="blogPostTmpl" type='text/plain'>
       <div id="{{id}}" class="blogPost hero-unit" > <!-- blog post-->
-          <span class="postUserName">{{author}}</span >
+          <span class="postUserName">{{author}} wrote:</span >
           {{#title}}
-          <h4>{{title}}</h4>
+          <h4 class="postTitle">{{title}}</h4>
           {{/title}}
           {{#body}}
           <p>{{body}}</p>
@@ -60,7 +60,7 @@
       </div>
     </div>
 
-    <div class="blogHeader container initSite">
+    <div class="blogHeader container">
         <img class="initSite pointer" src="assets/ElBlogoHeader2.png">
     <div class="hero-unit container centerContainer">
         <div class="row">
