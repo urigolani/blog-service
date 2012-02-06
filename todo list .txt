@@ -1,0 +1,12 @@
+1. activate the add post button.
+2. activate the search options button
+3. log for search button.
+4. add a delete button for a blog
+4. tags field, parse by commas to make it look nicer
+5. activate getposts - no filters - on click.
+7. add forward and backword buttons at buttom of the blog page. footer that appears only if the blog list has elements.
+9. handle many tags
+12. every call to setView with main view should init the search fields
+graphics: 
+1. blog post - fix header's location
+2. navbar - make wider
