@@ -62,8 +62,9 @@
 
     <div class="blogHeader container">
         <img class="initSite pointer" src="assets/ElBlogoHeader2.png">
-    <div class="hero-unit container centerContainer">
-        <div class="row">
+    </div>
+    <div class="hero-unit container centerContainer mainViewColor">
+        <div class="row mainView">
             <div class="span7">
                 <div id="blogContainer"> <!--blog posts-->
                 </div>    
@@ -71,8 +72,7 @@
                     <img id="btnPrev" class="traversePostButton" src="assets/leftArrow.png">
                     <img id="btnNext" class="traversePostButton" src="assets/rightArrow.png">
                 </div>
-            </div>
-            
+            </div>            
 
             <div class="sideOptions span3 "> <!-- options-->
                 <button id="btnAddPost" class="btn-success btn-large sideOptionsButton">Add post</button>
@@ -102,6 +102,23 @@
             </div>
         </div>
 
+        <div class="addPostView">
+            <span class="addPostHeader"> Add a new post!</span>
+            <div class="row">
+                    <div class="span2">
+                        <h3 class="addPostHeader">
+                            Title:
+                        </h3>
+                    </div>
+                    <div class="span10">
+                        <input class="addPostTitleInput" />
+                    </div>
+                    <div class="span5 offset2">
+                        <input class="form-search well">
+                        </input>
+                    </div>
+            </div>
+        </div>
     </div> <!-- /container -->
 
 
@@ -111,23 +128,11 @@
     <script src="Scripts/jQuery.js" ></script>
     <script src="Scripts/hogan.js"></script>
     <script src="Scripts/ServiceUtil.js"></script>
-    <script src="Scripts/ServiceRequestManager.js"></script>
-    <script src="Scripts/mainPageViewModel.js"></script>
     <script src="Scripts/HttpRequestBase.js"></script>
-
-    <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
-    <script src="Scripts/bootstrap/bootstrap-transition.js"></script>
-    <script src="Scripts/bootstrap/bootstrap-alert.js"></script>
-    <script src="Scripts/bootstrap/bootstrap-modal.js"></script>
-    <script src="Scripts/bootstrap/bootstrap-dropdown.js"></script>
-    <script src="Scripts/bootstrap/bootstrap-scrollspy.js"></script>
-    <script src="Scripts/bootstrap/bootstrap-tab.js"></script>
-    <script src="Scripts/bootstrap/bootstrap-tooltip.js"></script>
-    <script src="Scripts/bootstrap/bootstrap-popover.js"></script>
-    <script src="Scripts/bootstrap/bootstrap-button.js"></script>
-    <script src="../assets/js/bootstrap-collapse.js"></script>
-    <script src="Scripts/bootstrap/bootstrap-carousel.js"></script>
-    <script src="Scripts/bootstrap/bootstrap-typeahead.js"></script>
+    <script src="Scripts/ServiceRequestManager.js"></script>
+    <script src="Scripts/jquery.color.js" ></script>
+    <script src="Scripts/mainPageViewModel.js"></script>
+    <!--script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script-->
 
   </body>
 </html>

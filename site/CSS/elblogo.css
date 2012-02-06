@@ -28,7 +28,7 @@ a#userNameHeader:hover {
 }
 
 .centerContainer {
-    position:relative; background-color: #2C4762; padding: 35px 50px 10px 50px; left: -45px;
+    position:relative; padding: 35px 50px 10px 50px;
     margin-top: 20px;
 }
 
@@ -120,3 +120,21 @@ div[class~="blogPost"][class~="hero-unit"] p {
     margin-top: 5px;
 }
 
+
+/* add post view */
+.addPostView{
+    diplay: none;
+}
+
+.addPostTitleInput {
+    width:700px;
+}
+
+/*center container animations and views*/
+.mainViewColor{
+    background-color: #2C4762;
+}
+
+.addPostColor{
+    background-color: #0f0f0f;
+}

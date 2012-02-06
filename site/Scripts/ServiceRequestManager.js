@@ -79,7 +79,6 @@
             return differ.promise();
         },
 
-
         getFeeds: function (onSuccess, path, filters) {
             /// <summary>
             /// Gets the feeds from the given directory

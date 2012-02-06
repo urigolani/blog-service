@@ -179,9 +179,17 @@
 
             switch (view) {
                 case 'mainView':
-                    $('.searchOptions').hide();
-                    $('.traversePostButton').hide();
+                    $('.searchOptions').hide();  // hide the side options
+                    $('.traversePostButton').hide(); // hide traverse posts button.
+                    $('.addPostView').hide(); // hide the add post view
+                    $('.mainView').show(); // make sure the main view is visible
+                    $('.centerContainer').animate({'background-color': '#2C4762'}, 'slow');
                     // TODO - add show props to what ever will be removed for the create post page
+                    break;
+                case 'addPostView':
+                    $('.mainView').hide(); // hide the main view
+                    $('.addPostView').show(); // show the add post view
+                    $('.centerContainer').animate({'background-color': '#E0E0E0'}, 'slow');
                     break;
             }
         },
