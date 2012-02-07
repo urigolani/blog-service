@@ -78,7 +78,12 @@
             differ.resolve(resp);
             return differ.promise();
         },
+        addPost: function(post, onSuccess, onFailure){
+            var differ = $.Deferred();
 
+
+            differ.resolve();
+        },
         getFeeds: function (onSuccess, path, filters) {
             /// <summary>
             /// Gets the feeds from the given directory

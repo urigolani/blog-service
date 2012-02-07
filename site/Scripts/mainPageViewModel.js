@@ -184,9 +184,9 @@
                     $('.addPostView').hide(); // hide the add post view
                     $('.mainView').show(); // make sure the main view is visible
                     $('.centerContainer').animate({'background-color': '#2C4762'}, 'slow');
-                    // TODO - add show props to what ever will be removed for the create post page
                     break;
                 case 'addPostView':
+                    $('.addPostInput').val(''); // make sure addPost page has clean inputs
                     $('.mainView').hide(); // hide the main view
                     $('.addPostView').show(); // show the add post view
                     $('.centerContainer').animate({'background-color': '#E0E0E0'}, 'slow');
@@ -269,6 +269,31 @@
                 }, self.getPostsError);
             });
 
+            jqDoc.on('click', '#addPostCreatePostBtn', function (event) {
+                var title = $('.addPostTitleInput').val(),
+                    postContent = $('.addPostContentInput').val(),
+                    tags = $('.addPostTagsInput').val().split(','),
+                    post = {
+                        'author': self.userName,
+                        'title': title,
+                        'content': postContent,
+                        'tags': tags
+                    };
+
+                function createPostSuccess(posts) {
+                    self.serviceRequestManager.getPosts({'author': self.userName}).done( function(posts){
+                        self.getPostsInitSuccess(posts);
+                    });
+                }
+
+                function createPostError(err) {
+                    alert('Service error - Post could not be added');
+                }
+
+                self.serviceRequestManager.addPost(post).then(createPostSuccess, createPostError);
+                self.setView('mainView');
+            });
+
             jqDoc.on('click', '.blogPostTag', function (event) {
                 var opts,
                     jqText = $(this).text(),
@@ -277,7 +302,7 @@
                     tags: [tag]
                 };
                 self.serviceRequestManager.getPosts(opts).then(self.getPostsInitSuccess.bind(self), self.getPostsError.bind(self));
-            });
+            })
         }
     }
 

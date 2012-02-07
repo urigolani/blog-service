@@ -118,6 +118,7 @@ div[class~="blogPost"][class~="hero-unit"] p {
     -moz-border-radius: 6px;
     border-radius: 6px;
     margin-top: 5px;
+    background-color: #0f0f0f;
 }
 
 
@@ -126,7 +127,7 @@ div[class~="blogPost"][class~="hero-unit"] p {
     margin-left:auto; margin-right: auto;
 }
 .addPostView{
-    diplay: none;
+   diplay: none;
 }
 
 .addPostAddTitle ,
@@ -143,6 +144,7 @@ div[class~="blogPost"][class~="hero-unit"] p {
     margin-top: 15px;
 }
 
+.addPostTagsInput ,
 .addPostContentInput ,
 .addPostTitleInput {
     border: 1px solid #eee;
@@ -171,6 +173,32 @@ div[class~="blogPost"][class~="hero-unit"] p {
     resize: none; font-size: 18px; font:sans-serif;
 }
 
+.addPostTagsInput {
+    line-height: 22px; font-size: 18px; font:sans-serif; color: #28A828;
+}
+
+.addPostFooterDiv{
+    position:relative; bottom: 10px;
+}
+
+.addPostButton {
+    line-height: 22px;
+    font:normal 20px "trebuchet ms",sans-serif;
+    color:#CACACA;
+    font-weight: bold;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    background-image: -moz-linear-gradient(top, #C0C0C0, #F2F2F2);
+    background-image: -ms-linear-gradient(top, #C0C0C0, #FAF6F7);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#C0C0C0), to(#CACACA));
+    background-image: -webkit-linear-gradient(top, #C0C0C0, #CACACA);
+    background-image: -o-linear-gradient(top, #C0C0C0, #CACACA);
+    background-image: linear-gradient(top, #C0C0C0, #FAF6F7);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#C0C0C0', endColorstr='#FAF6F7', GradientType=0);
+
+}
 /*center container animations and views*/
 .mainViewColor{
     background-color: #2C4762;

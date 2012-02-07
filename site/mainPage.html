@@ -21,7 +21,7 @@
   
   <script id="blogPostTmpl" type='text/plain'>
       <div id="{{id}}" class="blogPost hero-unit" > <!-- blog post-->
-          <span class="postUserName">{{author}} wrote:</span >
+          <span class="postUserName">{{author}}:</span >
           {{#title}}
           <h4 class="postTitle">{{title}}</h4>
           {{/title}}
@@ -101,22 +101,32 @@
 
         <div class="addPostView">
             <span class="addPostHeader"> Add a new post!</span>
-                <div class="span12 addPostHeaderDiv">
-                    <h3 class="addPostAddTitle">
-                        Title (optional):
-                    </h3>
-                    <input class="span10 center addPostTitleInput " />
+            <div class="span12 addPostHeaderDiv">
+                <div class="row">
+                    <div class="span5">
+                        <h3 class="addPostAddTitle">
+                            Title (optional):
+                        </h3>
+                        <input class="span5 addPostTitleInput addPostInput" />
+                    </div>
+                    <div class="offset1 span4" style="position:relative;">
+                        <h3 class="addPostAddTitle">
+                            tags:
+                        </h3>
+                        <input class="span4 addPostTagsInput addPostInput" />
+                    </div>
                 </div>
-                <div class="span12 addPostContentDiv">
-                    <h3 class="addPostAddTitle">
-                        Post:
-                    </h3>
-                    <textarea class="span10 center addPostContentInput"></textarea>
-                </div>
-                <div class="span12 addPostFooterDiv">
-                    <button></button>
-                    <button></button>
-                </div>
+            </div>
+            <div class="span12 addPostContentDiv">
+                <h3 class="addPostAddTitle">
+                    Post:
+                </h3>
+                <textarea class="span10 center addPostContentInput addPostInput"></textarea>
+            </div>
+            <div class="span10 addPostFooterDiv">
+                <button id="addPostCreatePostBtn" class="btn-primary btn-large addPostButton ">Create Post</button>
+                <button class="btn-primary btn-large addPostButton initSite">Cancel..</button>
+            </div>
         </div>
     </div> <!-- /container -->
 
