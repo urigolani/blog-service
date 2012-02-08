@@ -14,7 +14,6 @@ app.configure('development', function(){
     app.use(express.staticCache());
 });
 
-
 // exports
 exports.listen = function(port){
     app.listen(port);
@@ -33,6 +32,11 @@ app.get('/getposts', verifyAuthentication, validateOptions, function (req, res){
 
         res.json(posts);
     });
+});
+
+app.get('/signout', verifyAuthentication, function (req, res){
+    res.clearCookie('username');
+    res.send(200);
 });
 
 app.post('/addpost', verifyAuthentication, function (req, res){
@@ -106,7 +110,6 @@ function isUserCookie (req, res, next){
             res.cookie('username', userName, { expires: new Date(Date.now() + 86409000), httpOnly: true });
         }
     } else {
-        //res.clearCookie('userName');
         req.authenticated = false;
     }
 
@@ -118,6 +121,7 @@ function signInRouter (req, res, next){
     if(req.authenticated) {
         if(url === '/' || url === 'signinpage.htm'){
             req.url = '/mainPage.html';
+            res.cookie('name', req.cookies.username, { expires: new Date(Date.now() + 100000)});
         }
     } else if(!req.authenticated) {
         if(url === '/' || url === 'mainPage.html'){

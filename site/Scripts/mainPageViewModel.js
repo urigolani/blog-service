@@ -60,7 +60,8 @@
             var self = this;
 
             this.postsList = [];
-            this.userName = window.getUrlParameters(window.location.toString())['username'];
+            this.userName = document.cookie.split('=')[1].trim();
+            $('#userNameHeader').html(this.userName);
 
             this.serviceRequestManager = new ElBlogo.ServiceRequestManager();
             this.postTemplate = Hogan.compile($('#blogPostTmpl').html());
@@ -309,8 +310,93 @@
                     tags: [tag]
                 };
                 self.serviceRequestManager.getPosts(opts).then(self.getPostsInitSuccess.bind(self), self.getPostsError.bind(self));
-            })
+            });
+
+            jqDoc.on('click', '#searchOptionsSearchButton', function (event) {
+                var opts,
+                    tags = $('#searchOptionsTagsInput').val(),
+                    fromDate = $('#searchOptionsfromDateInput').val(),
+                    untilDate = $('#searchOptionsUntilDateInput').val(),
+                    author = $('#searchOptionsAuthorInput').val();
+
+                if(author) {
+                    if(validateAuthor(author)){
+                        opts['author'] = author;
+                    } else {
+                        return;//alert error
+                    }
+                }
+
+                if(fromDate){
+                    if(validateDate(fromDate)){
+                        opts['fromDate'] = fromDate;
+                    } else {
+                        return;//alert error
+                    }
+                }
+
+                if(untilDate){
+                    if(validateDate(untilDate)){
+                        opts['untilDate'] = untilDate;
+                    } else {
+                        return;//alert error
+                    }
+                }
+
+                if(tags){
+                    if(validateTags(tags)){
+                        opts['tags'] = tags;
+                    } else {
+                        return;//alert error
+                    }
+                }
+
+                self.serviceRequestManager.getPosts(opts).then(self.getPostsInitSuccess.bind(self), self.getPostsError.bind(self));
+            });
         }
+    }
+
+    //internal methods:
+
+    function validateAuthor(author){
+        if(typeof author !== 'string') return false;
+        if(author.length > authorMaxLength) return false;
+
+        var pat = /^\w+$/g;
+        if(author.match(pat)) return true;
+    }
+
+    function validateDate(date){
+        if(typeof date !== 'string') return false;
+        if(date.length !== 10) return false;
+
+        var pat = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/(19|20)\d\d$/g;
+
+        if(!date.match(pat))
+            return false;
+
+        var day = date.replace(pat, '$1');
+        var month = date.replace(pat, '$2');
+        var year = date.replace(pat, '$3');
+
+        if (day == 31 && (month == 4 || month == 6 || month == 9 || month == 11)) {
+            return false; // 31st of a month with 30 days
+        } else if (day >= 30 && month == 2) {
+            return false; // February 30th or 31st
+        } else if (month == 2 && day == 29 && !(year % 4 == 0 && (year % 100 != 0 || year % 400 == 0))) {
+            return 0; // February 29th outside a leap year
+        } else {
+            return true;
+        }
+    }
+
+    function validateTags(tags){
+        if(typeof tags !== 'string') return false;
+
+        if(tags.length > tagsMaxLength) return false;
+        var pat = /^([a-zA-Z]+,)*[a-zA-Z]+$/g;
+
+        if(tags.match(pat)) return true;
     }
 
     window.MainController = new ElBlogo.MainController();
