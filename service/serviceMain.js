@@ -1,45 +1,57 @@
-var express = require('express').createServer(),
+var express = require('express'),
+    app = express.createServer(),
     fs = require('fs'),
     path = require('path'),
     sanitizer = require('sanitizer');
-    dbClient = require('dbClientMock'); // TODO - replace with require('dbClient');
+    dbClient = require('./dbClientMock'); // TODO - replace with require('dbClient');
+
+app.configure('development', function(){
+    app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+    app.use(express.bodyParser());
+    app.use(express.cookieParser());
+    app.use(validateUser);
+    app.use(signInRouter);
+    app.use(express.static(path.join(__dirname, '../site')));
+    app.use(express.staticCache());
+});
 
 // add a body parser to the service
-express.use(require('express').bodyParser());
+app.use(require('express').bodyParser());
+app.use(require('express').cookieParser());
 
-// static file server api:
-express.get('/CSS/:fileName',function (req, res){
-    var filePath = path.join(__dirname, '../site/CSS', req.params.fileName);
-    res.header('Content-Type', 'text/css');
-    res.sendfile(filePath);
-});
-
-express.get('/Scripts/:fileName',function (req, res){
-    var filePath = path.join(__dirname, '../site/Scripts', req.params.fileName);
-    res.header('Content-Type', 'text/javascript');
-    res.sendfile(filePath);
-});
-
-express.get('/Scripts/bootstrap/:fileName',function (req, res){
-    var filePath = path.join(__dirname, '../site/Scripts/bootstrap', req.params.fileName);
-    res.header('Content-Type', 'text/javascript');
-    res.sendfile(filePath);
-});
-
-express.get('/',function (req, res){
-    var filePath = path.join(__dirname, '../site', 'mainPage.html');
-    res.header('Content-Type', 'text/html');
-    res.sendfile(filePath);
-});
-
-express.get('/assets/:fileName',function (req, res){
-    var filePath = path.join(__dirname, '../site/assets', req.params.fileName);
-    res.header('Content-Type', 'image/png');
-    res.sendfile(filePath);
-});
+//// static file server api:
+//app.get('/CSS/:fileName',function (req, res){
+//    var filePath = path.join(__dirname, '../site/CSS', req.params.fileName);
+//    res.header('Content-Type', 'text/css');
+//    res.sendfile(filePath);
+//});
+//
+//app.get('/Scripts/:fileName',function (req, res){
+//    var filePath = path.join(__dirname, '../site/Scripts', req.params.fileName);
+//    res.header('Content-Type', 'text/javascript');
+//    res.sendfile(filePath);
+//});
+//
+//app.get('/Scripts/bootstrap/:fileName',function (req, res){
+//    var filePath = path.join(__dirname, '../site/Scripts/bootstrap', req.params.fileName);
+//    res.header('Content-Type', 'text/javascript');
+//    res.sendfile(filePath);
+//});
+//
+//app.get('/',function (req, res){
+//    var filePath = path.join(__dirname, '../site', 'mainPage.html');
+//    res.header('Content-Type', 'text/html');
+//    res.sendfile(filePath);
+//});
+//
+//app.get('/assets/:fileName',function (req, res){
+//    var filePath = path.join(__dirname, '../site/assets', req.params.fileName);
+//    res.header('Content-Type', 'image/png');
+//    res.sendfile(filePath);
+//});
 
 // web api:
-express.get('/getposts',validateUser, validateOptions, function (req, res){
+app.get('/getposts', validateOptions, function (req, res){
     if(err){
         return res.send(err.message, 400);
     }
@@ -53,7 +65,7 @@ express.get('/getposts',validateUser, validateOptions, function (req, res){
     });
 });
 
-express.post('/addpost',validateUser, function (req, res){
+app.post('/addpost', function (req, res){
     if(err){
         return res.send(err.message, 400);
     }
@@ -72,7 +84,7 @@ express.post('/addpost',validateUser, function (req, res){
 
 // exports
 exports.listen = function(port){
-    express.listen(port);
+    app.listen(port);
 }
 
 //internal functions:
@@ -120,6 +132,27 @@ function validateOptions (req, res, next){
 
 function validateUser (req, res, next){
     // validate cookie
+    var userName = req.cookies.userName || (req.url === '/' ? req.query.username : null);
+    if(userName && userName < 40 && userName.match(/\w*/g)) {
+        // set the userName cookie if missing from the request
+        if(!req.cookies.userName)
+            res.cookie('userName', userName, { expires: new Date(Date.now() + 900000), httpOnly: true });
+        req.userValid = true;
+    } else {
+        res.clearCookie('userName');
+        req.userValid = false;
+    }
+
+    next();
+}
+
+function signInRouter (req, res, next){
+    if(!req.userValid)
+        req.url = '/signInPage.htm';
+    else if(req.url === '/') {
+        req.url = '/mainPage.html';
+    }
+    next();
 }
 
 function validateAuthor(author){

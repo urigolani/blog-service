@@ -60,7 +60,7 @@
             var self = this;
 
             this.postsList = [];
-            //this.userName = document.cookie.split('=')[1].trim(),
+            this.userName = document.cookie.split('=')[1].trim();
 
             this.serviceRequestManager = new ElBlogo.ServiceRequestManager();
             this.postTemplate = Hogan.compile($('#blogPostTmpl').html());
