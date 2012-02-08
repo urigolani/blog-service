@@ -1,6 +1,5 @@
 var express = require('express'),
     app = express.createServer(),
-    fs = require('fs'),
     path = require('path'),
     sanitizer = require('sanitizer');
     dbClient = require('./dbClientMock'); // TODO - replace with require('dbClient');
@@ -9,49 +8,20 @@ app.configure('development', function(){
     app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
     app.use(express.bodyParser());
     app.use(express.cookieParser());
-    app.use(validateUser);
+    app.use(isUserCookie);
     app.use(signInRouter);
     app.use(express.static(path.join(__dirname, '../site')));
     app.use(express.staticCache());
 });
 
-// add a body parser to the service
-app.use(require('express').bodyParser());
-app.use(require('express').cookieParser());
 
-//// static file server api:
-//app.get('/CSS/:fileName',function (req, res){
-//    var filePath = path.join(__dirname, '../site/CSS', req.params.fileName);
-//    res.header('Content-Type', 'text/css');
-//    res.sendfile(filePath);
-//});
-//
-//app.get('/Scripts/:fileName',function (req, res){
-//    var filePath = path.join(__dirname, '../site/Scripts', req.params.fileName);
-//    res.header('Content-Type', 'text/javascript');
-//    res.sendfile(filePath);
-//});
-//
-//app.get('/Scripts/bootstrap/:fileName',function (req, res){
-//    var filePath = path.join(__dirname, '../site/Scripts/bootstrap', req.params.fileName);
-//    res.header('Content-Type', 'text/javascript');
-//    res.sendfile(filePath);
-//});
-//
-//app.get('/',function (req, res){
-//    var filePath = path.join(__dirname, '../site', 'mainPage.html');
-//    res.header('Content-Type', 'text/html');
-//    res.sendfile(filePath);
-//});
-//
-//app.get('/assets/:fileName',function (req, res){
-//    var filePath = path.join(__dirname, '../site/assets', req.params.fileName);
-//    res.header('Content-Type', 'image/png');
-//    res.sendfile(filePath);
-//});
+// exports
+exports.listen = function(port){
+    app.listen(port);
+}
 
 // web api:
-app.get('/getposts', validateOptions, function (req, res){
+app.get('/getposts', verifyAuthentication, validateOptions, function (req, res){
     if(err){
         return res.send(err.message, 400);
     }
@@ -65,12 +35,12 @@ app.get('/getposts', validateOptions, function (req, res){
     });
 });
 
-app.post('/addpost', function (req, res){
+app.post('/addpost', verifyAuthentication, function (req, res){
     if(err){
         return res.send(err.message, 400);
     }
     var post = req.body,
-        author; // get author from request cookie.
+        author = req.cookies.username; // get author from request cookie.
 
     post[title] = sanitizer.sanitize(post[title] || '');
     post[content] = sanitizer.sanitize(post[content] || '');
@@ -81,11 +51,6 @@ app.post('/addpost', function (req, res){
     res.header('Content-Type', 'text/html');
     res.send();
 });
-
-// exports
-exports.listen = function(port){
-    app.listen(port);
-}
 
 //internal functions:
 var tagsMaxLength = 200,
@@ -130,36 +95,52 @@ function validateOptions (req, res, next){
     next();
 }
 
-function validateUser (req, res, next){
+function isUserCookie (req, res, next){
     // validate cookie
-    var userName = req.cookies.userName || (req.url === '/' ? req.query.username : null);
-    if(userName && userName < 40 && userName.match(/\w*/g)) {
+    var userName = req.cookies.username || (req.url.split('?')[0] === '/' ? req.query.username : null);
+    if(userName && validateAuthor(userName)) {
+        req.authenticated = true;
+
         // set the userName cookie if missing from the request
-        if(!req.cookies.userName)
-            res.cookie('userName', userName, { expires: new Date(Date.now() + 900000), httpOnly: true });
-        req.userValid = true;
+        if(!req.cookies.username){
+            res.cookie('username', userName, { expires: new Date(Date.now() + 86409000), httpOnly: true });
+        }
     } else {
-        res.clearCookie('userName');
-        req.userValid = false;
+        //res.clearCookie('userName');
+        req.authenticated = false;
     }
 
     next();
 }
 
 function signInRouter (req, res, next){
-    if(!req.userValid)
-        req.url = '/signInPage.htm';
-    else if(req.url === '/') {
-        req.url = '/mainPage.html';
+    var url = req.url.split('?')[0].toLowerCase();
+    if(req.authenticated) {
+        if(url === '/' || url === 'signinpage.htm'){
+            req.url = '/mainPage.html';
+        }
+    } else if(!req.authenticated) {
+        if(url === '/' || url === 'mainPage.html'){
+            req.url = '/signinpage.htm';
+        }
     }
     next();
+}
+
+function verifyAuthentication(req, res, next){
+    var err;
+    if(!req.authenticated){
+        err = new Error('User not authenticated');
+    }
+
+    next(err);
 }
 
 function validateAuthor(author){
     if(typeof author !== 'string') return false;
     if(author.length > authorMaxLength) return false;
 
-    var pat = /^\w*$/g;
+    var pat = /^\w+$/g;
     if(author.match(pat)) return true;
 }
 

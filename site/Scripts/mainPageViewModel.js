@@ -60,7 +60,7 @@
             var self = this;
 
             this.postsList = [];
-            this.userName = document.cookie.split('=')[1].trim();
+            this.userName = window.getUrlParameters(window.location.toString())['username'];
 
             this.serviceRequestManager = new ElBlogo.ServiceRequestManager();
             this.postTemplate = Hogan.compile($('#blogPostTmpl').html());
@@ -202,6 +202,13 @@
                 self.setView('mainView');
                 self.serviceRequestManager.getPosts({})
                     .then(self.getPostsInitSuccess.bind(self), self.getPostsError);
+            });
+
+            // sign out handler:
+            jqDoc.on('click', '.signOutLink', function (event) {
+                self.serviceRequestManager.signout(function(){
+                    window.location('/');
+                });
             });
 
             // blog posts - next and prev buttons handlers
