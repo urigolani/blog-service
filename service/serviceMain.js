@@ -21,11 +21,7 @@ exports.listen = function(port){
 
 // web api:
 app.get('/getposts', verifyAuthentication, validateOptions, function (req, res){
-    if(err){
-        return res.send(err.message, 400);
-    }
-
-    dbclient.getPosts(req.opts, function(posts) {
+    dbClient.getPosts(req.opts, function(err, posts) {
         if (err){
             return res.send(err.message, 500);
         }
@@ -34,22 +30,19 @@ app.get('/getposts', verifyAuthentication, validateOptions, function (req, res){
     });
 });
 
-app.get('/signout', verifyAuthentication, function (req, res){
+app.put('/signout', verifyAuthentication, function (req, res){
     res.clearCookie('username');
     res.send(200);
 });
 
 app.post('/addpost', verifyAuthentication, function (req, res){
-    if(err){
-        return res.send(err.message, 400);
-    }
     var post = req.body,
         author = req.cookies.username; // get author from request cookie.
 
-    post[title] = sanitizer.sanitize(post[title] || '');
-    post[content] = sanitizer.sanitize(post[content] || '');
-    post[timeStamp] = (new date()).getTime();
-    post[tags] = (sanitizer.sanitize(post[tags] || '')).split(',');
+    post['title'] = sanitizer.sanitize(post['title'] || '');
+    post['content'] = sanitizer.sanitize(post['content'] || '');
+    post['timeStamp'] = (new Date()).getTime();
+    post['tags'] = (sanitizer.sanitize(post['tags'] || '')).split(',');
 
     dbClient.addPost(post);
     res.header('Content-Type', 'text/html');
@@ -61,7 +54,7 @@ var tagsMaxLength = 200,
     authorMaxLength = 40;
 
 function validateOptions (req, res, next){
-    if(!req.body) return next(new Error('Invalid request. Missing body'));;
+    if(!req.body) return next(new Error('Invalid request. Missing body'));
 
     req.opts = {};
     if(req.body.author){
@@ -104,7 +97,7 @@ function isUserCookie (req, res, next){
     var userName = req.cookies.username || (req.url.split('?')[0] === '/' ? req.query.username : null);
     if(userName && validateAuthor(userName)) {
         req.authenticated = true;
-
+        req.username = userName;
         // set the userName cookie if missing from the request
         if(!req.cookies.username){
             res.cookie('username', userName, { expires: new Date(Date.now() + 86409000), httpOnly: true });
@@ -119,13 +112,13 @@ function isUserCookie (req, res, next){
 function signInRouter (req, res, next){
     var url = req.url.split('?')[0].toLowerCase();
     if(req.authenticated) {
-        if(url === '/' || url === 'signinpage.htm'){
-            req.url = '/mainPage.html';
-            res.cookie('name', req.cookies.username, { expires: new Date(Date.now() + 100000)});
+        if(url === '/' || url === '/signinpage.htm'){
+            req.originalUrl = req.url = '/mainPage.html';
+            res.cookie('name', req.username, { expires: new Date(Date.now() + 100000)});
         }
-    } else if(!req.authenticated) {
-        if(url === '/' || url === 'mainPage.html'){
-            req.url = '/signinpage.htm';
+    } else  {
+        if(url === '/' || url === '/mainpage.html'){
+            req.originalUrl = req.url = '/signinpage.htm';
         }
     }
     next();
@@ -144,7 +137,7 @@ function validateAuthor(author){
     if(typeof author !== 'string') return false;
     if(author.length > authorMaxLength) return false;
 
-    var pat = /^\w+$/g;
+    var pat = /^\w[\w ]*$/g;
     if(author.match(pat)) return true;
 }
 

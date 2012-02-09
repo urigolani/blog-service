@@ -60,7 +60,7 @@
             var self = this;
 
             this.postsList = [];
-            this.userName = document.cookie.split('=')[1].trim();
+            this.userName = decodeURIComponent(document.cookie.split('=')[1].trim());
             $('#userNameHeader').html(this.userName);
 
             this.serviceRequestManager = new ElBlogo.ServiceRequestManager();
@@ -207,8 +207,8 @@
 
             // sign out handler:
             jqDoc.on('click', '.signOutLink', function (event) {
-                self.serviceRequestManager.signout(function(){
-                    window.location('/');
+                self.serviceRequestManager.signout().done(function(){
+                    window.location = '/';
                 });
             });
 
@@ -258,25 +258,6 @@
                 $('.searchOptionsInput').val('');
             });
 
-            // create post event handlers
-            jqDoc.on('click', '#btnCreatePost', function (event) {
-                var opts = {
-                    author: self.userName,
-                    pKey: self.lastPartitionKey
-                };
-
-                self.serviceRequestManager.getPosts(opts).then(self.getPostsInitSuccess.bind(self), self.getPostsError.bind(self));
-                self.setView('mainView');
-                // TODO - code to add post
-                var postTimestamp = 0, post = {}  // TODO - remove this after adding the above code
-                self.serviceRequestManager.getPosts(opts).then( function(posts){
-                    if(posts.length > 0 && posts[0].timestamp != postTimestamp){
-                        posts.unshift(post);
-                    }
-                    self.getPostsInitSuccess(posts);
-                }, self.getPostsError);
-            });
-
             jqDoc.on('click', '#addPostCreatePostBtn', function (event) {
                 var title = $('.addPostTitleInput').val(),
                     postContent = $('.addPostContentInput').val(),
@@ -289,9 +270,7 @@
                     };
 
                 function createPostSuccess(posts) {
-                    self.serviceRequestManager.getPosts({'author': self.userName}).done( function(posts){
-                        self.getPostsInitSuccess(posts);
-                    });
+                    self.serviceRequestManager.getPosts({'author': self.userName}).done(self.getPostsInitSuccess.bind(self));
                 }
 
                 function createPostError(err) {
@@ -319,11 +298,13 @@
                     untilDate = $('#searchOptionsUntilDateInput').val(),
                     author = $('#searchOptionsAuthorInput').val();
 
+                event.stopPropagation();
+
                 if(author) {
                     if(validateAuthor(author)){
                         opts['author'] = author;
                     } else {
-                        return;//alert error
+                        return alert('Please check the format of the AUTHOR field'); //alert error
                     }
                 }
 
@@ -331,7 +312,7 @@
                     if(validateDate(fromDate)){
                         opts['fromDate'] = fromDate;
                     } else {
-                        return;//alert error
+                        return alert('Please check the format of the DATING FROM field'); //alert error
                     }
                 }
 
@@ -339,7 +320,7 @@
                     if(validateDate(untilDate)){
                         opts['untilDate'] = untilDate;
                     } else {
-                        return;//alert error
+                        return alert('Please check the format of the DATING UNTIL field'); //alert error
                     }
                 }
 
@@ -347,7 +328,7 @@
                     if(validateTags(tags)){
                         opts['tags'] = tags;
                     } else {
-                        return;//alert error
+                        return alert('Please check the format of the TAGS field'); //alert error
                     }
                 }
 
@@ -357,12 +338,13 @@
     }
 
     //internal methods:
-
+    var tagsMaxLength = 200,
+        authorMaxLength = 40;
     function validateAuthor(author){
         if(typeof author !== 'string') return false;
         if(author.length > authorMaxLength) return false;
 
-        var pat = /^\w+$/g;
+        var pat = /^\w[\w ]*$/g;
         if(author.match(pat)) return true;
     }
 
@@ -406,409 +388,3 @@
         window.MainController.bind();
     });
 })(window, jQuery, Hogan)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//var f = function(){}
-//f.prototype = {
-//        generateTemplate: function (id, parentId) {
-//            /// <summary>
-//            /// generate template for a part and add it to the DOM.
-//            /// continue traversing the dirParts tree and create templates
-//            /// for children as well.
-//            /// </summary>
-//            /// <param name="id" type="Number">The dir part's id in the dirparts tree</param>
-//            /// <param name="parentId" type="Number">The dir part's parent id in the dirparts tree</param>
-//            /// <return type="Object">The part generated</param>
-//            var dirPart = this.dirParts[id],
-//                childId,
-//                template,
-//                renderedTemplate,
-//                part;
-//
-//            renderedTemplate = this.dirPartTemplate.render(dirPart);
-//            part = $(renderedTemplate)
-//                .css('margin-left', dirPart.depth * partSideOffset + 'px')
-//                .hide()
-//                .appendTo('#' + parentId);
-//
-//            if (dirPart.type) {
-//                for (childId in dirPart.children) {
-//                    this.generateTemplate(childId, id);
-//                }
-//            }
-//
-//            return part;
-//        },
-//        initOptionWindow: function (mousey, isDir) {
-//            /// <summary>
-//            /// initialize the floating options window by repositioning it and clearing all fields
-//            /// chooses which fields to display according to the item type {isDir}
-//            /// </summary>
-//            /// <param name="mousey" type="Number">the mouse y coordinate</param>
-//            /// <param name="isDir" type="Boolean">is the item a directory</param>
-//
-//            // initialize input fields
-//            $('.floatingOptionsInputSet').val('');
-//            $('.floatingOptionsFilterSection').hide();
-//            $('#floatingOptionsFiltersButton').removeClass('buttonPressed');
-//            $('.floatingOptions')
-//                .css('top', mousey + 'px');
-//
-//            if (isDir) $('.floatingOptionsFolderSection').show();
-//            else $('.floatingOptionsFolderSection').hide();
-//
-//        },
-//        removePart: function (id) {
-//            /// <summary>
-//            /// Remove the part marked by 'id' from the dirPart tree, removing his corresponding element in the DOM,
-//            /// as well as all of his children.
-//            /// update parent part of sons removal and make sure parent's 'expanded' attribute is set to false in case
-//            /// it has no more children.
-//            /// </summary>
-//            /// <param name="id" type="Number">the part's id</param>
-//
-//            var part = this.dirParts[id],
-//                parentId = part.parentId,
-//                children = part.children,
-//                parentPartChildren,
-//                self = this;
-//
-//            //delete children bits
-//            if (children) {
-//                Object.keys(children).forEach(function (childKey) {
-//                    self.removePart(childKey);
-//                });
-//            }
-//
-//            // if not root
-//            if (parentId) {
-//                parentPartChildren = this.dirParts[parentId].children;
-//                // delete child from parent's children at parts logic tree
-//
-//                delete parentPartChildren[id];
-//
-//                // if the parent has no more children, make him unexpanded
-//                if (Object.keys(parentPartChildren).length === 0) {
-//                    $('#' + parentId).attr('expanded', 'false');
-//                }
-//
-//                // remove child from DOM
-//                $('#' + id).remove();
-//            }
-//        },
-//        addOrUpdatePart: function (opts) {
-//            /// <summary>
-//            /// Checks wether the part being inserted is already contained in the
-//            /// logic tree. Does not allow duplication.
-//            /// </summary>
-//            /// <param name="opts" type="Object">options</param>
-//
-//            // if sibling exists with the same name
-//            for (var childKey in opts.parentPart.children) {
-//                if (opts.name === this.dirParts[childKey].name)
-//                    return;
-//            }
-//
-//            // add part
-//            opts.parentPart.children[opts.id] = true;
-//
-//            // add folder
-//            this.dirParts[opts.id] = {
-//                'id': opts.id,
-//                'parentId': opts.parentId,
-//                'name': opts.name,
-//                'path': opts.parentPart.path + opts.name + '/',
-//                'type': opts.isDir,
-//                'depth': opts.parentPart.depth + 1,
-//                'children': opts.isDir ? {} : null
-//            }
-//
-//            this.generateTemplate(opts.id, opts.parentId).show();
-//        },
-//        xmlToHTML: function (xmlString) {
-//            var result = '',
-//                c,
-//                i,
-//                counter = 0;
-//            for (i in xmlString) {
-//                c = xmlString[i];
-//                //if (c === '<')
-//                //   result += '\"<';
-//                // else if (c === '>')
-//                //    result += '>\"';
-//                // else
-//                result += c;
-//
-//                if(counter++ % 20  === 0)
-//                    result += ' <br/> ';
-//
-//            }
-//
-//
-//            return result;
-//        },
-//        RSStoHTML: function (rssDoc) {
-//
-//            var root = $('#feedsView').empty();
-//
-//            rowElement = document.createElement('div');
-//            rowElement.setAttribute("id", "item_list");
-//            rowElement.setAttribute("class", "row");
-//            rowElement.setAttribute("style", "margin-left: 30px;");
-//
-//
-//            itemElement = document.createElement('div');
-//            itemElement.setAttribute("class", "hero-unit");
-//            // itemElement.setAttribute("style", "border-right-width: 0;");
-//
-//
-//            headerElement = document.createElement('H4');
-//            contentElement = document.createElement('p');
-//            contentElement.setAttribute("style", "color: #5A3939")
-//            authorElement = document.createElement('h5');
-//
-//            channel = rssDoc.getElementsByTagName("channel");
-//            items = rssDoc.getElementsByTagName("item");
-//
-//            for (var i = 0; i < items.length; i++) {
-//
-//                next = itemElement.cloneNode(true);
-//
-//                item = items[i];
-//                title = item.getElementsByTagName("title")[0];
-//                author = item.getElementsByTagName('author')[0];
-//                description = item.getElementsByTagName('description')[0];
-//                category = item.getElementsByTagName('category')[0];
-//
-//                if (title != null) {
-//                    if (title.childNodes.length > 0) {
-//                        titleE = headerElement.cloneNode(true);
-//                        titleE.innerText = title.childNodes[0].nodeValue;
-//                        next.appendChild(titleE);
-//                    }
-//                }
-//
-//                if (author != null) {
-//                    if (author.childNodes.length > 0) {
-//                        authorE = authorElement.cloneNode(true);
-//                        authorE.innerText = "author: " + author.childNodes[0].nodeValue;
-//                        next.appendChild(authorE);
-//                    }
-//                }
-//
-//                if (description != null) {
-//                    if (description.childNodes.length > 0) {
-//                        descriptionE = contentElement.cloneNode(true);
-//                        descriptionE.innerHTML = description.childNodes[0].nodeValue;
-//                        next.appendChild(descriptionE);
-//                    }
-//                }
-//
-//                if (category != null) {
-//                    if (category.childNodes.length > 0) {
-//                        categoryE = authorElement.cloneNode(true);
-//                        categoryE.innerText = "category: " + category.childNodes[0].nodeValue;
-//                        next.appendChild(categoryE);
-//                    }
-//                }
-//
-//                next.id = "";
-//
-//                rowElement.appendChild(next);
-//
-//            }
-//            root.append(rowElement);
-//        },
-//        configureUI: function () {
-//            var jqDoc = $(document),
-//                VMContext = this;
-//
-//            jqDoc.on('click', '.dirPartItem', function (event) {
-//                var jo = $(this),
-//                    id = jo.attr('id'),
-//                    isExpanded = jo.attr('expanded') === 'true' ? true : false,
-//                    element = VMContext.dirParts[id],
-//                    isDir = element.type,
-//                    children = element.children,
-//                    childId,
-//                    child;
-//
-//                event.stopPropagation();
-//                VMContext.currentItem = id;
-//                VMContext.initOptionWindow(event.pageY, isDir);
-//
-//                if (!isExpanded) $('.floatingOptions').show();
-//                else $('.floatingOptions').hide();
-//
-//                // invert expansion property for item. and show or hide children accordingly
-//                // if the item is a feed or an empty folder. do not change the expansion property. leave it as is {false}
-//                if (children) {
-//                    if (Object.keys(children).length > 0)
-//                        jo.attr('expanded', isExpanded ? 'false' : 'true');
-//
-//                    // show or hide children
-//                    for (childId in children) {
-//                        child = $('#' + childId);
-//                        if (isExpanded) {
-//                            child.hide();
-//                        } else {
-//                            child.show();
-//                        }
-//                    }
-//                }
-//            });
-//
-//            jqDoc.on('click', '#floatingOptionsCreateDirButton', function (event) {
-//                var parentId = VMContext.currentItem,
-//                    parentPart = VMContext.dirParts[parentId],
-//                    id = VMContext.genId(),
-//                    name = $('.floatingOptionsItemInput').val(),
-//                    opts;
-//
-//                event.stopPropagation();
-//
-//                // exit if the dir name is empty
-//                if (name.length === 0) return;
-//
-//                opts = {
-//                    'id': id,
-//                    'parentId': parentId,
-//                    'name': name,
-//                    'parentPart': parentPart,
-//                    'isDir': true
-//                };
-//
-//                // add folder
-//                VMContext.addOrUpdatePart(opts);
-//            });
-//
-//            jqDoc.on('click', '#floatingOptionsAddFeedButton', function (event) {
-//                var parentId = VMContext.currentItem,
-//                    parentPart = VMContext.dirParts[parentId],
-//                    id = VMContext.genId(),
-//                    name = $('.floatingOptionsItemInput').val(),
-//                    url = $('.floatingOptionsUrlInput').val(),
-//                    path = null;
-//
-//                event.stopPropagation();
-//                if (url.length === 0 || name.length === 0) return;
-//                path = parentPart.path + name;
-//
-//                // update service
-//                VMContext.serviceRequestManager.addFeed(function () {
-//                    var opts = {
-//                        'id': id,
-//                        'parentId': parentId,
-//                        'name': name,
-//                        'parentPart': parentPart,
-//                        'isDir': false
-//                    };
-//
-//                    // add folder
-//                    VMContext.addOrUpdatePart(opts);
-//                }
-//                , path
-//                , url);
-//
-//                $('.floatingOptionsInputSet').val('');
-//            });
-//
-//            jqDoc.on('click', '#floatingOptionsDeleteButton', function (event) {
-//                var id = VMContext.currentItem,
-//                    currentPart = VMContext.dirParts[id];
-//
-//                $('.floatingOptions').hide();
-//
-//                // update service
-//                VMContext.serviceRequestManager.deleteFeed(function () {
-//                    VMContext.removePart(id);
-//                }
-//                , currentPart.path);
-//            });
-//
-//            jqDoc.on('click', '#floatingOptionsFiltersButton', function (event) {
-//                // show/hide filters
-//                if ($('#floatingOptionsFiltersButton').hasClass('buttonPressed')) {
-//                    $('#floatingOptionsFiltersButton').removeClass('buttonPressed');
-//                    $('.floatingOptionsFilterSection').hide();
-//                } else {
-//                    $('#floatingOptionsFiltersButton').addClass('buttonPressed');
-//                    $('.floatingOptionsFilterSection').show();
-//                }
-//            });
-//
-//            jqDoc.on('click', '#floatingOptionsGetFeedsButton', function (event) {
-//                var id = VMContext.currentItem,
-//                    currentPart = VMContext.dirParts[id],
-//                    filters = {},
-//                    _title = $('#floatingOptionsFilterTitle').val(),
-//                    _category = $('#floatingOptionsFilterCategory').val(),
-//                    _author = $('#floatingOptionsFilterAuthor').val();
-//
-//                if (_title.length > 0) filters['title'] = _title;
-//                if (_category.length > 0) filters['category'] = _category;
-//                if (_author.length > 0) filters['author'] = _author;
-//
-//                // get feeds from service
-//                VMContext.serviceRequestManager.getFeeds(function (feeds) {
-//                    VMContext.RSStoHTML(feeds);
-//                }
-//                , currentPart.path
-//                , filters);
-//            });
-//        }
-//    }
-//
-//}
-
