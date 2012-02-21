@@ -79,7 +79,7 @@
             this.traversePostsList('init');
         },
         getPostsError: function(err){
-
+            alert('Failed to retrieve posts. Please try again');
         },
         traversePostsList: function(state){
             ///<summary>
@@ -216,19 +216,18 @@
             jqDoc.on('click', '#btnNext', function (event) {
                 var opts = {
                     pKey: self.lastPartitionKey
-                    },
-                    getPostsPromise;
+                    };
 
                 event.stopPropagation();
                 // check if we need to get more posts from the service
                 if(self.postsList.length < self.totalSearchPosts && self.postsIndex + self.postChunk >= self.postsList.length) {
-                    getPostsPromise = self.serviceRequestManager.getPosts(opts);
-                    getPostsPromise.done(function(postsResponse) {
+                     self.serviceRequestManager.getPosts(opts)
+                    .then(function(postsResponse) {
                         self.totalSearchPosts = postsResponse.totalSearchPosts;
                         self.lastPartitionKey = postsResponse.pKey;
                         self.postsList = self.postsList.concat(postsResponse.posts);
                         self.traversePostsList('next');
-                    });
+                    }, self.getPostsError.bind(self));
                 } else {
                     // we have enough posts locally, or there is no more posts to milk from the service for
                     // the current search
@@ -261,7 +260,7 @@
             jqDoc.on('click', '#addPostCreatePostBtn', function (event) {
                 var title = $('.addPostTitleInput').val(),
                     postContent = $('.addPostContentInput').val(),
-                    tags = $('.addPostTagsInput').val().split(','),
+                    tags = $('.addPostTagsInput').val(),
                     post = {
                         'author': self.userName,
                         'title': title,
@@ -270,15 +269,27 @@
                     };
 
                 function createPostSuccess(posts) {
-                    self.serviceRequestManager.getPosts({'author': self.userName}).done(self.getPostsInitSuccess.bind(self));
+                    self.serviceRequestManager.getPosts({'author': self.userName}).then(self.getPostsInitSuccess.bind(self),
+                    function(statusCode){
+                        alert('There was a problem contacting El Blogo. Please try again');
+                    });
                 }
 
                 function createPostError(err) {
                     alert('Service error - Post could not be added');
                 }
+                if( (!tags || (tags && validateTags(tags))) && postContent){
+                    self.serviceRequestManager.addPost(post).then(createPostSuccess, createPostError);
+                    self.setView('mainView');
+                } else {
+                    var message = '';
+                    if(!postContent)
+                        message = 'Please include a body to the post';
+                    else if(tags)
+                        message = 'Please make sure tags are consisted of letters only';
 
-                self.serviceRequestManager.addPost(post).then(createPostSuccess, createPostError);
-                self.setView('mainView');
+                    alert(message);
+                }
             });
 
             jqDoc.on('click', '.blogPostTag', function (event) {

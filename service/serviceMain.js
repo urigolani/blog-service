@@ -37,15 +37,41 @@ app.put('/signout', verifyAuthentication, function (req, res){
 
 app.post('/addpost', verifyAuthentication, function (req, res){
     var post = req.body,
+        err = false;
         author = req.cookies.username; // get author from request cookie.
+        res.header('Content-Type', 'text/html');
 
-    post['title'] = sanitizer.sanitize(post['title'] || '');
-    post['content'] = sanitizer.sanitize(post['content'] || '');
+    if(post['title']){
+        if(typeof post['title'] === 'string' ){
+            sanitizer.sanitize(post['title']);
+        } else {
+            err = true;
+        }
+    }
+
+    if(post['content']){
+        if(typeof post['content'] === 'string' && post['content'].length > 0){
+            sanitizer.sanitize(post['content']);
+        } else {
+            err = true
+        }
+    }
+
+    if(post['tags'] ){
+        if(typeof post['tags'] === 'string' && post['tags'].length < tagsMaxLength && validateTags(post['tags'])) {
+            post['tags'] = (sanitizer.sanitize(post['tags'])).split(',');
+        } else {
+            err = true;
+        }
+    }
+
     post['timeStamp'] = (new Date()).getTime();
-    post['tags'] = (sanitizer.sanitize(post['tags'] || '')).split(',');
+
+    if(err) {
+        return res.send('bad reuqest', 400);
+    }
 
     dbClient.addPost(post);
-    res.header('Content-Type', 'text/html');
     res.send();
 });
 

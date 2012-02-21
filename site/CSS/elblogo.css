@@ -127,6 +127,7 @@ div[class~="blogPost"][class~="hero-unit"] p {
     margin-left:auto; margin-right: auto;
 }
 .addPostView{
+   position:relative;
    diplay: none;
 }
 
@@ -137,10 +138,12 @@ div[class~="blogPost"][class~="hero-unit"] p {
 }
 
 .addPostHeader {
+    position:relative;
     font-size: 35px;
 }
 
 .addPostHeaderDiv {
+    position:relative;
     margin-top: 15px;
 }
 
@@ -165,7 +168,9 @@ div[class~="blogPost"][class~="hero-unit"] p {
 
 
 .addPostContentDiv {
+    position:relative;
     margin-top: 20px;
+    margin-buttom: 40px;
 }
 
 .addPostContentInput {
