@@ -18,7 +18,7 @@ exports.getPosts = function(opts, cb){
             body: 'some chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few times' +
                 'some chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few times ' +
                 'some chunk of words copied a few times',
-            tags: ['mechanics', 'sports']
+            tags: ['mechanics']
         }
         posts.push(post1);
     }

@@ -74,11 +74,14 @@
             ///</summary>
             this.clearPosts();
             this.postsList = getResp.posts;
-            this.lastPartitionKey = getResp.pKey;
+            this.lastPartitionKey = getResp.lastPartitionKey;
             this.totalSearchPosts = getResp.totalSearchPosts;
             this.traversePostsList('init');
         },
         getPostsError: function(err){
+            if(console){
+                console.log(err);
+            }
             alert('Failed to retrieve posts. Please try again');
         },
         traversePostsList: function(state){
@@ -191,6 +194,7 @@
                     $('.mainView').hide(); // hide the main view
                     $('.addPostView').show(); // show the add post view
                     $('.centerContainer').animate({'background-color': '#E0E0E0'}, 'slow');
+                    $('html, body').animate({ scrollTop: 0 }, 'slow');
                     break;
             }
         },
@@ -269,6 +273,7 @@
                     };
 
                 function createPostSuccess(posts) {
+                    self.setView('mainView');
                     self.serviceRequestManager.getPosts({'author': self.userName}).then(self.getPostsInitSuccess.bind(self),
                     function(statusCode){
                         alert('There was a problem contacting El Blogo. Please try again');
@@ -276,11 +281,12 @@
                 }
 
                 function createPostError(err) {
-                    alert('Service error - Post could not be added');
+                    //TODO - show an error window with two options. 1 retry. 2. cancel - takes us to main screen.
+                    alert('Could not add post. Please try again.');
                 }
+
                 if( (!tags || (tags && validateTags(tags))) && postContent){
                     self.serviceRequestManager.addPost(post).then(createPostSuccess, createPostError);
-                    self.setView('mainView');
                 } else {
                     var message = '';
                     if(!postContent)

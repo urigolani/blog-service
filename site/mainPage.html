@@ -20,13 +20,16 @@
   
   <script id="blogPostTmpl" type='text/plain'>
       <div id="{{id}}" class="blogPost hero-unit" > <!-- blog post-->
-          <span class="postUserName">{{author}}:</span >
+          <div class="postTitleAndDateContainer">
+              <span class="postUserName">{{author}}:</span >
+              {{#date}}
+              <span class="postDate">{{date}}</span>
+              {{/date}}
+          </div>
           {{#title}}
           <h4 class="postTitle">{{title}}</h4>
           {{/title}}
-          {{#body}}
           <p>{{body}}</p>
-          {{/body}}
           <div class="blogPostTags">
               {{#tags}}
               <span class="blogPostTag">#{{name}}</span>
@@ -37,15 +40,15 @@
   
   <body>
 
-    <div class="navbar navbar-fixed-top" style="background-color: #2C4762;">
-      <div class="navbar-inner">
-        <div class="container">
+  <div class="navbar navbar-fixed-top" style="background-color: #454545;">
+  <div class="navbar-inner">
+          <div>
           <a class="btn btn-navbar " data-toggle="collapse" data-target=".nav-collapse">
             <span class="i-bar"></span>
             <span class="i-bar"></span>
             <span class="i-bar"></span>
           </a>
-          <a class="brand initSite pointer">El Blogo</a>
+          <a class="brand initSite pointer navbarHeader">El Blogo</a>
           <div class="nav-collapse  pull-right">
             <ul class="nav">
               <li><a id="userNameHeader" target="_blank">user name</a></li>

@@ -14,8 +14,13 @@ body {
     -moz-border-radius: 15px;
     border-radius: 15px;
 }
+
 .container {
     width: 820px;
+}
+
+.navbarHeader{
+    position:relative; left: 20px;
 }
 
 /* no hover color change for the user name header*/
@@ -50,8 +55,19 @@ div[class~="blogPost"][class~="hero-unit"] p {
 }
 
 .postUserName {
-    display:block; margin-left: -20px; margin-top:5px; font-size: 1.1em; font-family: "COMIC SANS MS"; color: #444;
-    margin-buttom:30px;
+    display:inline; margin-left: -20px; font-size: 1.1em; font-family: "COMIC SANS MS"; color: #444;
+}
+
+.postTitleAndDateContainer{
+    position:static; margin-top:5px; width: 500px;
+}
+
+.postDate {
+    position: relative; float:right; font-size: 0.8em; font-family: "COMIC SANS MS"; color: #444; right: 10px;
+}
+
+.postDate :after{
+    clear:both;
 }
 
 .postTitle{
@@ -174,6 +190,7 @@ div[class~="blogPost"][class~="hero-unit"] p {
 }
 
 .addPostContentInput {
+    position: relative;
     height: 400px; overflow-y:scroll; margin-bottom: 40px; line-height: 22px; padding: 10px;
     resize: none; font-size: 18px; font:sans-serif;
 }

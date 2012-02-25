@@ -122,10 +122,47 @@
                 contentType: request.contentType
             })
             .then(function (data, textStatus) {
-                if (textStatus === "success")
-                    return differ.resolve(data);
-                else differ.reject();
-            }, differ.reject);
+                if (textStatus !== "success"){
+                    differ.reject('get posts - service refused with response:\n' + data);
+                }
+                // validate response
+                var totalSearchPosts = data.totalSearchPosts,
+                    posts = data.posts,
+                    pKey = data.lastPartitionKey,
+                    i, l,
+                    post,
+                    date,
+                    day, month, hour, minutes;
+
+                if(!totalSearchPosts || typeof totalSearchPosts !== 'number'
+                    || !posts || typeof posts !== 'object' || !posts.length
+                    || !pKey || typeof pKey !== 'number'){
+                    return differ.reject('getposts - response type error');
+                }
+
+                for(i = 0, l = posts.length; i < l; i++){
+                    post = posts[i];
+                    if(!post.author || !post.timestamp || typeof post.timestamp !='number' || !post.body){
+                        return differ.reject();
+                    }
+
+                    date = new Date(post.timestamp);
+                    day = date.getDate();
+                    month = date.getMonth();
+                    hour = date.getHours();
+                    minutes = date.getMinutes();
+                    post.date = (day >= 10 ? '' : '0') + day + '/'
+                        + (month >= 10 ? '' : '0') + month + '/'
+                        + date.getFullYear() + ' '
+                        + (hour >= 10 ? '' : '0') + hour + ':'
+                        + (minutes >= 10 ? '' : '0') + minutes;
+                }
+
+                return differ.resolve(data);
+            }, function(jqXHR, textStatus){ // TODO - check the format of jQuery promise error
+                    differ.reject('getposts - ajax request failed with statuscode' + jqXHR.status);
+                }
+            );
 
             return differ.promise();
         },
