@@ -1,5 +1,6 @@
 var k=0;
-exports.getPosts = function(opts, cb){
+exports.init = function () {};
+exports.getPosts = function(opts,shouldCount, cb){
     /// <summary>
     /// requests the current directory list from the service.
     /// </summary>
@@ -12,10 +13,10 @@ exports.getPosts = function(opts, cb){
     for(; k < i; k++){
         post1 = {
             id: 'post1',
-            timestamp: (new Date()).getTime(),
+            timeStamp: (new Date()).getTime(),
             author: 'uri golani' + k,
             title: 'the book of eli',
-            body: 'some chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few times' +
+            content: 'some chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few times' +
                 'some chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few times ' +
                 'some chunk of words copied a few times',
             tags: ['mechanics']
@@ -23,8 +24,8 @@ exports.getPosts = function(opts, cb){
         posts.push(post1);
     }
 
-    resp.totalSearchPosts = 40;
-    resp.lastPartitionKey = 50;
+    resp.numOfPosts = 40;
+    resp.pKey = 'f50f';
     resp.posts = posts;
     cb(null,resp)
 };

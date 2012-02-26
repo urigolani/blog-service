@@ -2,7 +2,8 @@ var express = require('express'),
     app = express.createServer(),
     path = require('path'),
     sanitizer = require('sanitizer');
-    dbClient = require('./dbClientMock'); // TODO - replace with require('dbClient');
+    //dbClient = require('./dbClientMock'); // TODO - replace with require('dbClient');
+    dbClient = require('./dbClient');
 
 app.configure('development', function(){
     app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
@@ -16,14 +17,15 @@ app.configure('development', function(){
 
 // exports
 exports.listen = function(port){
+    dbClient.init('localhost', 'liatz', 27017);
     app.listen(port);
 }
 
 // web api:
-app.get('/getposts', verifyAuthentication, validateOptions, function (req, res){
-    dbClient.getPosts(req.opts, function(err, posts) {
+app.post('/posts', verifyAuthentication, validateOptions, function (req, res){
+    dbClient.getPosts(req.opts, req.opts.shouldCount, function(err, posts) {
         if (err){
-            return res.send(err.message, 500);
+            return res.send(err.message, 400);
         }
 
         res.json(posts);
@@ -71,8 +73,13 @@ app.post('/addpost', verifyAuthentication, function (req, res){
         return res.send('bad reuqest', 400);
     }
 
-    dbClient.addPost(post);
-    res.send();
+    dbClient.addPost(post, function(err){
+        if(err) {
+            return res.send(err, 400);
+        }
+
+        res.send(200);
+    });
 });
 
 //internal functions:
@@ -81,11 +88,12 @@ var tagsMaxLength = 200,
 
 function validateOptions (req, res, next){
     if(!req.body) return next(new Error('Invalid request. Missing body'));
+    var parsedDate;
 
     req.opts = {};
     if(req.body.author){
         if(validateAuthor(req.body.author)){
-            req.opts[auther] = req.body.author;
+            req.opts['author'] = req.body.author;
         } else {
             return next(new Error('Invalid author'));
         }
@@ -93,7 +101,8 @@ function validateOptions (req, res, next){
 
     if(req.body.fromDate){
         if (validateDate(req.body.fromDate)){
-            req.opts[fromDate] = req.body.fromDate;
+            parsedDate = req.body.fromDate.split('/');
+            req.opts['fromDate'] = new Date(parsedDate[2],parsedDate[1], parsedDate[0]).getTime();
         } else {
             return next(new Error('Invalid fromDate'));
         }
@@ -101,7 +110,8 @@ function validateOptions (req, res, next){
 
     if(req.body.untilDate){
         if(validateDate(req.body.untilDate)){
-            req.opts[untilDate] = req.body.untilDate;
+            parsedDate = req.body.untilDate.split('/');
+            req.opts['untilDate'] = new Date(parsedDate[2],parsedDate[1], parsedDate[0]).getTime();
         } else {
             return next(new Error('Invalid untilDate'));
         }
@@ -109,12 +119,14 @@ function validateOptions (req, res, next){
 
     if(req.body.tags){
         if(validateTags(req.body.tags)) {
-            req.opts[tags] = req.body.tags.split(',');
+            req.opts['tags'] = req.body.tags.split(',');
         } else {
             return next(new Error('Invalid tags'));
         }
     }
 
+    req.opts.shouldCount = req.body.shouldCount;
+    req.opts.pKey = req.body.pKey;
     next();
 }
 
@@ -192,9 +204,7 @@ function validateDate(date){
 }
 
 function validateTags(tags){
-    if(typeof tags !== 'string') return false;
-
-    if(tags.length > tagsMaxLength) return false;
+    if(typeof tags !== 'string' || tags.length > tagsMaxLength) return false;
     var pat = /^([a-zA-Z]+,)*[a-zA-Z]+$/g;
 
     if(tags.match(pat)) return true;

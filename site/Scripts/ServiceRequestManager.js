@@ -8,76 +8,76 @@
     }
 
     ElBlogo.ServiceRequestManager.prototype = {
-        getPosts1: function (opts) {
-            /// <summary>
-            /// requests the current directory list from the service.
-            /// </summary>
-            /// <param name="opts" type="String">path to the feed/dir to fetch from</param>
-            var posts = [],
-                post1,post2,
-                differ = $.Deferred(),
-                resp = {};
-
-            post1 = {
-                id: 'post1',
-                timestamp: (new Date()).getTime(),
-                author: 'uri golani',
-                title: 'the book of eli',
-                body: 'some chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few times' +
-                    'some chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few times ' +
-                    'some chunk of words copied a few times',
-                tags: ['mechanics', 'sports']
-            }
-            post2 = {
-                id: 'post2',
-                timestamp: (new Date()).getTime(),
-                author: 'mor yaakobi',
-                title: 'blues',
-                body: 'some chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few times' +
-                    'some chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few times ' +
-                    'some chunk of words copied a few times',
-                tags: ['basketball', 'sports']
-            }
-
-            posts.push(post1);
-            posts.push(post2);
-            resp.totalSearchPosts = 2;
-            resp.lastPartitionKey = 50;
-            resp.posts = posts;
-            differ.resolve(resp);
-            return differ.promise();
-        },
-        k: 0,
-        getPosts3: function (opts) {
-            /// <summary>
-            /// requests the current directory list from the service.
-            /// </summary>
-            /// <param name="opts" type="String">path to the feed/dir to fetch from</param>
-            var posts = [],
-                post1,
-                differ = $.Deferred(),
-                resp = {},
-                i = this.k + 10;
-            for(; this.k < i; this.k++){
-                post1 = {
-                    id: 'post1',
-                    timestamp: (new Date()).getTime(),
-                    author: 'uri golani' + this.k,
-                    title: 'the book of eli',
-                    body: 'some chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few times' +
-                        'some chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few times ' +
-                        'some chunk of words copied a few times',
-                    tags: ['mechanics', 'sports']
-                }
-                posts.push(post1);
-            }
-
-            resp.totalSearchPosts = 40;
-            resp.lastPartitionKey = 50;
-            resp.posts = posts;
-            differ.resolve(resp);
-            return differ.promise();
-        },
+//        getPosts1: function (opts) {
+//            /// <summary>
+//            /// requests the current directory list from the service.
+//            /// </summary>
+//            /// <param name="opts" type="String">path to the feed/dir to fetch from</param>
+//            var posts = [],
+//                post1,post2,
+//                differ = $.Deferred(),
+//                resp = {};
+//
+//            post1 = {
+//                id: 'post1',
+//                timestamp: (new Date()).getTime(),
+//                author: 'uri golani',
+//                title: 'the book of eli',
+//                body: 'some chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few times' +
+//                    'some chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few times ' +
+//                    'some chunk of words copied a few times',
+//                tags: ['mechanics', 'sports']
+//            }
+//            post2 = {
+//                id: 'post2',
+//                timestamp: (new Date()).getTime(),
+//                author: 'mor yaakobi',
+//                title: 'blues',
+//                body: 'some chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few times' +
+//                    'some chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few times ' +
+//                    'some chunk of words copied a few times',
+//                tags: ['basketball', 'sports']
+//            }
+//
+//            posts.push(post1);
+//            posts.push(post2);
+//            resp.totalSearchPosts = 2;
+//            resp.lastPartitionKey = 50;
+//            resp.posts = posts;
+//            differ.resolve(resp);
+//            return differ.promise();
+//        },
+//        k: 0,
+//        getPosts3: function (opts) {
+//            /// <summary>
+//            /// requests the current directory list from the service.
+//            /// </summary>
+//            /// <param name="opts" type="String">path to the feed/dir to fetch from</param>
+//            var posts = [],
+//                post1,
+//                differ = $.Deferred(),
+//                resp = {},
+//                i = this.k + 10;
+//            for(; this.k < i; this.k++){
+//                post1 = {
+//                    id: 'post1',
+//                    timestamp: (new Date()).getTime(),
+//                    author: 'uri golani' + this.k,
+//                    title: 'the book of eli',
+//                    body: 'some chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few times' +
+//                        'some chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few timessome chunk of words copied a few times ' +
+//                        'some chunk of words copied a few times',
+//                    tags: ['mechanics', 'sports']
+//                }
+//                posts.push(post1);
+//            }
+//
+//            resp.totalSearchPosts = 40;
+//            resp.lastPartitionKey = 50;
+//            resp.posts = posts;
+//            differ.resolve(resp);
+//            return differ.promise();
+//        },
         addPost: function(post){
             var differ = $.Deferred(),
                 request = new ElBlogo.HttpRequestBase();
@@ -110,11 +110,11 @@
             var differ = $.Deferred(),
                 request = new ElBlogo.HttpRequestBase();
 
-            request.uri = '/getposts';
+            request.uri = '/posts';
             request.contentType = 'application/json';
             request.responseType = 'application/json';
             request.requestBody = JSON.stringify(opts || {});
-            request.httpMethod = "GET";
+            request.httpMethod = "POST";
             $.ajax({
                 type: request.httpMethod,
                 url: request.uri,
@@ -126,27 +126,27 @@
                     differ.reject('get posts - service refused with response:\n' + data);
                 }
                 // validate response
-                var totalSearchPosts = data.totalSearchPosts,
+                var numOfPosts = data.numOfPosts,
                     posts = data.posts,
-                    pKey = data.lastPartitionKey,
+                    pKey = data.pKey,
                     i, l,
                     post,
                     date,
                     day, month, hour, minutes;
 
-                if(!totalSearchPosts || typeof totalSearchPosts !== 'number'
-                    || !posts || typeof posts !== 'object' || !posts.length
-                    || !pKey || typeof pKey !== 'number'){
+                if((numOfPosts && typeof numOfPosts !== 'number')
+                    || !posts || typeof posts !== 'object' || posts.length == null
+                    || pKey == null || typeof pKey !== 'string'){
                     return differ.reject('getposts - response type error');
                 }
 
                 for(i = 0, l = posts.length; i < l; i++){
                     post = posts[i];
-                    if(!post.author || !post.timestamp || typeof post.timestamp !='number' || !post.body){
+                    if(!post.author || !post.timeStamp || typeof post.timeStamp !='number' || !post.content){
                         return differ.reject();
                     }
 
-                    date = new Date(post.timestamp);
+                    date = new Date(post.timeStamp);
                     day = date.getDate();
                     month = date.getMonth();
                     hour = date.getHours();

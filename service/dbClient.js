@@ -10,8 +10,8 @@ var mongoose = require('mongoose'),
         author:  String,
         tags :[String],
         title :String,
-        body: String,
-        timestamp: {type: Number}
+        content: String,
+        timeStamp: {type: Number}
     }),
 
     // create a post model
@@ -22,8 +22,9 @@ exports.init = function(host, dbName ,port){
 }
 
 exports.getPosts = function(params, shouldCount, cb) {
-    var fields = ['author','tags','title','body','timestamp','_id'],
-        conditions;
+    var fields = ['author','tags','title','content','timeStamp','_id'],
+        conditions,
+        options = {};
 
     if (!params){
         return cb(new Error('missing params'));
@@ -35,38 +36,26 @@ exports.getPosts = function(params, shouldCount, cb) {
     if(params.author)
         conditions['author'] = params.author;
     if(params.fromDate)
-        conditions['timestamp'] = {$gte : params.fromDate};
+        conditions['timeStamp'] = {$gte : params.fromDate};
     if(params.untilDate){
-        if(conditions['timestamp']) {
-            conditions['timestamp'].$lte = params.untilDate;
+        if(conditions['timeStamp']) {
+            conditions['timeStamp'].$lte = params.untilDate;
         } else {
-            conditions['timestamp'] = {$lte : params.untilDate};
+            conditions['timeStamp'] = {$lte : params.untilDate};
         }
     }
 
     if(params.tags)
         conditions['tags'] = {$all : params.tags};
 
-    conditions['limit'] = postsPageSize;
-    conditions['sort'] = {'timestamp': -1};
-
-    function callback(err, posts){
-        if (err) return cb(err);
-
-        cb(null, {
-            pKey: posts[posts.length-1]._id || _id || 0,
-            posts: posts || []
-        });
-    }
+    options['limit'] = postsPageSize;
+    options['sort'] = {'timeStamp': -1};
 
     if(shouldCount){
         var prev_cb = cb;
         cb = function(err, result){
             if(err) return prev_cb(err);
 
-            // remove the limit and the sort for the count;
-            delete conditions['limit'];
-            delete conditions['sort'];
             PostModel.count(conditions, function(err, count){
                 if(err) return prev_cb(err);
 
@@ -76,12 +65,17 @@ exports.getPosts = function(params, shouldCount, cb) {
         }
     }
 
-    PostModel.find(conditions, function(err, posts){
+    PostModel.find(conditions, fields, options, function(err, posts){
         if (err) return cb(err);
 
+        var pKey = '';
+        if(posts && (posts[posts.length-1])){
+            pKey = posts[posts.length-1]._id || pKey;
+        }
+
         cb(null, {
-            pKey: posts[posts.length-1]._id || _id || 0,
-            posts: posts || []
+            'pKey': pKey,
+            'posts': posts || []
         });
     });
 }
@@ -90,10 +84,10 @@ exports.addPost = function(params, cb) {
     var author = params.author;
     var tags = params.tags || [];
     var title = params.title || '';
-    var body = params.body;
-    var timestamp = params.timestamp;
+    var content = params.content;
+    var timeStamp = params.timeStamp;
 
-    if (!author || !body || !timestamp){
+    if (!author || !content || !timeStamp){
         return cb(new Error("missing parameters"));
     }
 
@@ -101,8 +95,8 @@ exports.addPost = function(params, cb) {
         'author': author,
         'tags': tags,
         'title': title ,
-        'body': body,
-        'timestamp': timestamp
+        'content': content,
+        'timeStamp': timeStamp
     }
-    PostModel.create( _post, cb);
+    return PostModel.create( _post, cb);
 }
