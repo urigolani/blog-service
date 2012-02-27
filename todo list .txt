@@ -1,10 +1,6 @@
-1. change colors of buttons.
 2. edit sign in page.
-4. change style of side search options
-5. finish error on add post, create the retry window.
-7. make sure malicious text insertion is handeled properly
-8. post page - add margin buttom
 9. add load test
 10. connect to db using user and password.
 11. deploy in SOA1
 12. add my area label
+13. favicon

@@ -2,14 +2,13 @@ var express = require('express'),
     app = express.createServer(),
     path = require('path'),
     sanitizer = require('sanitizer');
-    //dbClient = require('./dbClientMock'); // TODO - replace with require('dbClient');
     dbClient = require('./dbClient');
 
 app.configure('development', function(){
     app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
     app.use(express.bodyParser());
     app.use(express.cookieParser());
-    app.use(isUserCookie);
+    app.use(authenticate);
     app.use(signInRouter);
     app.use(express.static(path.join(__dirname, '../site')));
     app.use(express.staticCache());
@@ -20,6 +19,11 @@ exports.listen = function(port){
     dbClient.init('localhost', 'liatz', 27017);
     app.listen(port);
 }
+
+// consts :
+var maxPostLength = 50000,
+    tagsMaxLength = 200,
+    authorMaxLength = 40;
 
 // web api:
 app.post('/posts', verifyAuthentication, validateOptions, function (req, res){
@@ -45,15 +49,15 @@ app.post('/addpost', verifyAuthentication, function (req, res){
 
     if(post['title']){
         if(typeof post['title'] === 'string' ){
-            sanitizer.sanitize(post['title']);
+            post['title'] = sanitizer.sanitize(post['title']);
         } else {
             err = true;
         }
     }
 
     if(post['content']){
-        if(typeof post['content'] === 'string' && post['content'].length > 0){
-            sanitizer.sanitize(post['content']);
+        if(typeof post['content'] === 'string' && post['content'].length > 0 && post['content'].length < maxPostLength){
+            post['content'] = sanitizer.sanitize(post['content']);
         } else {
             err = true
         }
@@ -83,9 +87,6 @@ app.post('/addpost', verifyAuthentication, function (req, res){
 });
 
 //internal functions:
-var tagsMaxLength = 200,
-    authorMaxLength = 40;
-
 function validateOptions (req, res, next){
     if(!req.body) return next(new Error('Invalid request. Missing body'));
     var parsedDate;
@@ -130,15 +131,17 @@ function validateOptions (req, res, next){
     next();
 }
 
-function isUserCookie (req, res, next){
+function authenticate (req, res, next){
     // validate cookie
-    var userName = req.cookies.username || (req.url.split('?')[0] === '/' ? req.query.username : null);
+    var userName = req.cookies.username || (req.url.split('?')[0] === '/' ? req.query.username : null)
+        // load test special authentication permission. user is taken from the loadtest
+        || req.query.loadtest
     if(userName && validateAuthor(userName)) {
         req.authenticated = true;
         req.username = userName;
         // set the userName cookie if missing from the request
         if(!req.cookies.username){
-            res.cookie('username', userName, { expires: new Date(Date.now() + 86409000), httpOnly: true });
+            res.cookie('username', userName, { expires: new Date(Date.now() + 11186409000), httpOnly: true });
         }
     } else {
         req.authenticated = false;
@@ -163,12 +166,11 @@ function signInRouter (req, res, next){
 }
 
 function verifyAuthentication(req, res, next){
-    var err;
     if(!req.authenticated){
-        err = new Error('User not authenticated');
+        return res.send('not authenticated', 403);
     }
 
-    next(err);
+    next();
 }
 
 function validateAuthor(author){

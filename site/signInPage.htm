@@ -2,12 +2,17 @@
 <html>
 <head>
     <title>Sign in page</title>
+    <link href="CSS/signin.css" rel="stylesheet">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
 </head>
-<body>
-    <label class="" style="display: inline; position: relative; color: #999999; font-size: 1em; margin: 50px 10px 0px 5px">Please insert your name: </label>    
-    <input id="nameinput"class="" style="display: inline; position: relative; color: #999999; font-size: 1em; margin-right: 20px"/>    
-    <div class="" style="display: block; position: relative; color: #999999; font-size: 1em; margin-left: 5px; border-style:solid; border-color:#98bf21; width: 55px; cursor:pointer; padding: 2px 2px 2px 10px;" title= "click once your name was inserted" onclick="goToMainService()">Sign In</div>    
+<body>    
+    <div class="mainContainer">
+        <img class="logoImg" src="assets/ElBlogoHeader2.png"/> <!-- logo-->
+        <div class="title">What Ever's On Your Mind..</div>
+        <label class="sideText">Nick:</label>
+        <input id="nameinput" class="nameInput" />
+        <div class="btn-login" style="display: block; position: relative; color: #999999; font-size: 1em; margin-left: 5px; border-style:solid; border-color:#98bf21; width: 55px; cursor:pointer; padding: 2px 2px 2px 10px;" title= "click once your name was inserted" onclick="goToMainService()">Login!</div>
+    </div>    
     <script>
         function goToMainService() {
             //var serviceUri = "http://soa2.cs.bgu.ac.il:3962",
