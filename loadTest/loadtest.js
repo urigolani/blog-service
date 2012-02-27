@@ -35,7 +35,7 @@ var generateAsyncRequest = (function(){
         return {
             "author" : generateAuthor(),
             "title" : "LoremIpsum" + titleCounter++,
-            "content" : "body",//"Lorem Ipsum dolor sit amet, consectetuer adipiscingelit. Duis tellus. Donec ante dolor, iaculis nec, gravidaac, cursus in, eros. Mauris vestibulum, felis et egestasullamcorper, purus nibh vehicula sem, eu egestas antenisl non justo. Fusce tincidunt, lorem nev dapibusconsectetuer, leo orci mollis ipsum, eget suscipit erospurus in ante.",
+            "content" : "Lorem Ipsum dolor sit amet, consectetuer adipiscingelit. Duis tellus. Donec ante dolor, iaculis nec, gravidaac, cursus in, eros. Mauris vestibulum, felis et egestasullamcorper, purus nibh vehicula sem, eu egestas antenisl non justo. Fusce tincidunt, lorem nev dapibusconsectetuer, leo orci mollis ipsum, eget suscipit erospurus in ante.",
             s:'ss',
             "tags" : generateTags()
         }
@@ -80,9 +80,6 @@ var generateAsyncRequest = (function(){
         ,httpMethod = 'POST'
         ,body = choice ? generateQuery() : generatePost()
         ,target = choice ? 'posts' : 'addpost';
-
-        //body = generatePost();
-        //target = 'addpost';
 
         return asyncRequest(httpMethod, body, target);
     }

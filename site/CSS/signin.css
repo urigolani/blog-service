@@ -1,0 +1,88 @@
+html {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    background: #3c5a76 url('/assets/status_bg.png') no-repeat center top;
+    padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+}
+
+.mainContainer{
+    position:absolute; left: 50%; margin-left: -400px; top: 300px;
+    width:800px; height: 400px;
+}
+
+.logoImg{
+    display: block; margin-bottom: 20px; margin-left:auto; margin-right:auto
+}
+
+.title {
+    display: block; margin-left:auto; margin-right:auto
+}
+
+.inputContainer{
+    width: 100%; text-align:center; margin-top: 70px
+}
+
+.sideText{
+    margin-left:auto; margin-right:auto
+}
+
+.nameInput {
+    margin-left:auto; margin-right:auto;
+    height:34px;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    border-color: #acacb3;
+
+    line-height: 30px;
+    font: Arial, 'Helvetica Neue',Helvetica,sans-serif;
+    font-weight: bolder;
+    font-size: 25px;
+
+    background-image: linear-gradient(bottom, #DAE0E8 41%, #CED1E0 71%);
+    background-image: -o-linear-gradient(bottom, #DAE0E8 41%, #CED1E0 71%);
+    background-image: -moz-linear-gradient(bottom, #DAE0E8 41%, #CED1E0 71%);
+    background-image: -webkit-linear-gradient(bottom, #DAE0E8 41%, #CED1E0 71%);
+    background-image: -ms-linear-gradient(bottom, #DAE0E8 41%, #CED1E0 71%);
+
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.41, #DAE0E8),
+        color-stop(0.71, #CED1E0)
+    );
+}
+
+.btn-login{
+    margin-left:auto; margin-right:auto;
+
+    margin-left: 15px;
+    width: 100px; height:40px;
+    line-height: 22px;
+    font:normal 18px "trebuchet ms",sans-serif;
+    color:#C5CCFC;
+    font-weight: bold;
+
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    border-color: #52383B ;
+    background-image: linear-gradient(bottom, #561920 29%, #70353A 65%, #925057 83%);
+    background-image: -o-linear-gradient(bottom, #561920 29%, #70353A 65%, #925057 83%);
+    background-image: -moz-linear-gradient(bottom, #561920 29%, #70353A 65%, #925057 83%);
+    background-image: -webkit-linear-gradient(bottom, #561920 29%, #70353A 65%, #925057 83%);
+    background-image: -ms-linear-gradient(bottom, #561920 29%, #70353A 65%, #925057 83%);
+
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.29, #561920),
+        color-stop(0.65, #70353A),
+        color-stop(0.83, #925057)
+    );
+}
