@@ -31,16 +31,16 @@ body {
 
 .nameInput {
     margin-left:auto; margin-right:auto;
-    height:34px;
+    height:36px; width:150px;
     -webkit-border-radius: 6px;
     -moz-border-radius: 6px;
     border-radius: 6px;
     border-color: #acacb3;
-
-    line-height: 30px;
-    font: Arial, 'Helvetica Neue',Helvetica,sans-serif;
-    font-weight: bolder;
-    font-size: 25px;
+    color:#38557a;
+    line-height: 24px;
+    font: Arial,'Helvetica Neue',Helvetica,sans-serif;
+    font-size: 22px;
+    padding-left: 10px;
 
     background-image: linear-gradient(bottom, #DAE0E8 41%, #CED1E0 71%);
     background-image: -o-linear-gradient(bottom, #DAE0E8 41%, #CED1E0 71%);
@@ -64,7 +64,7 @@ body {
     width: 100px; height:40px;
     line-height: 22px;
     font:normal 18px "trebuchet ms",sans-serif;
-    color:#C5CCFC;
+    color:#a3b0c2;
     font-weight: bold;
 
     -webkit-border-radius: 6px;
