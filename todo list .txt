@@ -1,6 +1,10 @@
-2. edit sign in page.
-9. add load test
-10. connect to db using user and password.
 11. deploy in SOA1
 12. add my area label
-13. favicon
+13. solve mozzila styling for button - something is wrong the gradient
+14. add base64 encoder for image transport
+
+sign in page:
+button is a bit lower than input box.
+change button text color to grayer
+change font in input
+change style of 'your name'

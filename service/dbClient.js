@@ -14,11 +14,11 @@ var mongoose = require('mongoose'),
         timeStamp: {type: Number}
     }),
 
-    // create a post model
+    // csreate a post model
     PostModel = mongoose.model('Post', PostSchema);
 
-exports.init = function(host, dbName ,port){
-    mongoose.connect(host, dbName, port);
+exports.init = function(dbURI, dbPort, dbName, dbUserName, dbUserPass){
+    mongoose.connect('mongodb://'.concat(dbUserName,':',dbUserPass,'@',dbURI,':',dbPort,'/',dbName));
 }
 
 exports.getPosts = function(params, shouldCount, cb) {

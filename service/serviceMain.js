@@ -16,14 +16,19 @@ app.configure('development', function(){
 
 // exports
 exports.listen = function(port){
-    dbClient.init('localhost', 'liatz', 27017);
+    dbClient.init(dbURI, dbPort, dbName, dbUserName, dbUserPass);
     app.listen(port);
 }
 
 // consts :
 var maxPostLength = 50000,
     tagsMaxLength = 200,
-    authorMaxLength = 40;
+    authorMaxLength = 40,
+    dbURI = 'localhost',
+    dbUserPass = '7&6Ny.kB',
+    dbUserName = 'liatz',
+    dbPort = '27017',
+    dbName = 'liatz'
 
 // web api:
 app.post('/posts', verifyAuthentication, validateOptions, function (req, res){
