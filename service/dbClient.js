@@ -2,8 +2,17 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     postModel,
 
-    // the maximum number of posts per page
-    postsPageSize = 10,
+    // current active concurrent requests to the database
+    dbCounter = 0,
+
+    // queue to hold overflow of database requests
+    dbQueue = [],
+
+    // maximum number of concurrent requests to the database
+    maxDbRequests = 10,
+
+    // the maximum number of posts per page for paging
+    postsPageSize,
 
     // define the post schema
     PostSchema = new Schema({
@@ -17,7 +26,8 @@ var mongoose = require('mongoose'),
     // csreate a post model
     PostModel = mongoose.model('Post', PostSchema);
 
-exports.init = function(dbURI, dbPort, dbName, dbUserName, dbUserPass){
+exports.init = function(dbURI, dbPort, dbName, dbUserName, dbUserPass, postsPerPage){
+    postsPageSize = postsPerPage;
     mongoose.connect('mongodb://'.concat(dbUserName,':',dbUserPass,'@',dbURI,':',dbPort,'/',dbName));
 }
 
@@ -78,6 +88,7 @@ exports.getPosts = function(params, shouldCount, cb) {
             'posts': posts || []
         });
     });
+
 }
 
 exports.addPost = function(params, cb) {
@@ -99,4 +110,23 @@ exports.addPost = function(params, cb) {
         'timeStamp': timeStamp
     }
     return PostModel.create( _post, cb);
+}
+
+exports.dbExec = function(method) {
+    function cb() {
+        var method;
+        if(dbQueue.length > 0){
+            method = dbQueue.shift();
+            method(cb);
+        } else {
+            dbCounter--;
+        }
+    }
+
+    if(dbCounter < maxDbRequests) {
+        dbCounter++;
+        method(cb);
+    } else {
+        dbQueue.push(method);
+    }
 }

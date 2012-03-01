@@ -7,16 +7,16 @@ var request = require('request'),
 // a generator for posts
 var generateAsyncRequest = (function(){
     var titleCounter = 0
-    ,tagsList = ['sport', 'basketball', 'sleep', 'books', 'reading', 'food', 'leasure']
-    ,authorList = ['uri', 'mor', 'liat'];
+        ,tagsList = ['sport', 'basketball', 'sleep', 'books', 'reading', 'food', 'leasure']
+        ,authorList = ['uri', 'mor', 'liat'];
 
     function generateTags(){
         var numOfTags = Math.random() * 7
-        ,i
-        ,tags = '';
+            ,i
+            ,tags = '';
 
         for(i = 0; i < numOfTags; i++){
-             tags += getRandomTag() + ',';
+            tags += getRandomTag() + ',';
         }
 
         return tags.substring(0,tags.length - 1);
@@ -36,7 +36,6 @@ var generateAsyncRequest = (function(){
             "author" : generateAuthor(),
             "title" : "LoremIpsum" + titleCounter++,
             "content" : "Lorem Ipsum dolor sit amet, consectetuer adipiscingelit. Duis tellus. Donec ante dolor, iaculis nec, gravidaac, cursus in, eros. Mauris vestibulum, felis et egestasullamcorper, purus nibh vehicula sem, eu egestas antenisl non justo. Fusce tincidunt, lorem nev dapibusconsectetuer, leo orci mollis ipsum, eget suscipit erospurus in ante.",
-            s:'ss',
             "tags" : generateTags()
         }
     }
@@ -51,7 +50,8 @@ var generateAsyncRequest = (function(){
     function asyncRequest(httpMethod, body, target) {
         return function (cb) {
             var bodystr = JSON.stringify(body)
-            ,opts = {
+                ,requestRunTime
+                ,opts = {
                 method: httpMethod,
                 headers: {
                     'Content-Type': 'application/json'
@@ -60,6 +60,7 @@ var generateAsyncRequest = (function(){
                 body: bodystr
             };
 
+            requestRunTime = (new Date).getTime();
             request(opts, function (err, response, content) {
                 if (err) {
                     return cb(err);
@@ -67,9 +68,12 @@ var generateAsyncRequest = (function(){
 
                 if(response.statusCode !== 200){
                     return cb(new Error('request recieved bad status code: ' + response.statusCode + '\n'
-                    + 'request body:' + bodystr));
+                        + 'request body:' + bodystr));
                 }
-                cb(null, content);
+
+                var time = (new Date).getTime() - requestRunTime;
+                console.log('test end: ', time);
+                cb(null, time);
             });
         };
     }
@@ -77,9 +81,14 @@ var generateAsyncRequest = (function(){
     // The async request generator
     return function(){
         var choice = Math.floor(Math.random() * 2)
-        ,httpMethod = 'POST'
-        ,body = choice ? generateQuery() : generatePost()
-        ,target = choice ? 'posts' : 'addpost';
+            ,httpMethod = 'POST'
+            ,body = choice ? generateQuery() : generatePost()
+            ,target = choice ? 'posts' : 'addpost';
+
+        //body = generateQuery() 
+        //target = 'posts'
+        body = generatePost()
+        target = 'addpost'
 
         return asyncRequest(httpMethod, body, target);
     }
@@ -87,8 +96,10 @@ var generateAsyncRequest = (function(){
 
 function loadTest(){
     var requests = []
-    ,i
-    ,startTime;
+        ,i, l
+        ,startTime
+        ,avgRequestTime  = 0;
+
 
     for(i = 0; i < numOfRequests; i++){
         requests.push(generateAsyncRequest());
@@ -103,16 +114,15 @@ function loadTest(){
                 ,'err.message : ', err.message);
         }
         //console.log(items);
-
-        console.log('all requests have returned successfuly\n'
-        ,'timeElapsed: ', timeElapsed);
+        for( i=0, l = items.length; i < l; i++){
+            avgRequestTime += items[i];
+        }
+        avgRequestTime = numOfRequests ? avgRequestTime / numOfRequests : avgRequestTime;
+        console.log('all requests have returned successfuly');
+        console.log('averege request time: ', avgRequestTime, 'ms')
+        console.log('totalTimeElapsed: ', timeElapsed, 'ms');
     });
 }
 
 // run the load test
 loadTest();
-
-
-
-
-

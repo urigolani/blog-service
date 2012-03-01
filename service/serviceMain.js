@@ -1,7 +1,7 @@
 var express = require('express'),
     app = express.createServer(),
     path = require('path'),
-    sanitizer = require('sanitizer');
+    sanitizer = require('sanitizer'),
     dbClient = require('./dbClient');
 
 app.configure('development', function(){
@@ -16,7 +16,7 @@ app.configure('development', function(){
 
 // exports
 exports.listen = function(port){
-    dbClient.init(dbURI, dbPort, dbName, dbUserName, dbUserPass);
+    dbClient.init(dbURI, dbPort, dbName, dbUserName, dbUserPass, postsPerPage);
     app.listen(port);
 }
 
@@ -24,21 +24,28 @@ exports.listen = function(port){
 var maxPostLength = 50000,
     tagsMaxLength = 200,
     authorMaxLength = 40,
+    postsPerPage = 10,
     dbURI = 'localhost',
     dbUserPass = '7&6Ny.kB',
-    dbUserName = 'liatz',
+    dbUserName = 'liatza',
     dbPort = '27017',
-    dbName = 'liatz'
+    dbName = 'liatza'
 
 // web api:
 app.post('/posts', verifyAuthentication, validateOptions, function (req, res){
-    dbClient.getPosts(req.opts, req.opts.shouldCount, function(err, posts) {
-        if (err){
-            return res.send(err.message, 400);
-        }
+    function method(callback) {
+        dbClient.getPosts(req.opts, req.opts.shouldCount, function(err, posts) {
+            if (err){
+                res.send(err.message, 400);
+            } else {
+                res.json(posts);
+            }
 
-        res.json(posts);
-    });
+            callback();
+        });
+    }
+
+    dbClient.dbExec(method);
 });
 
 app.put('/signout', verifyAuthentication, function (req, res){
@@ -82,13 +89,19 @@ app.post('/addpost', verifyAuthentication, function (req, res){
         return res.send('bad reuqest', 400);
     }
 
-    dbClient.addPost(post, function(err){
-        if(err) {
-            return res.send(err, 400);
-        }
+    function method(callback){
+        dbClient.addPost(post, function(err){
+            if(err) {
+                return res.send(err, 400);
+            }
 
-        res.send(200);
-    });
+            res.send(200);
+
+            callback();
+        });
+    }
+
+    dbClient.dbExec(method);
 });
 
 //internal functions:
